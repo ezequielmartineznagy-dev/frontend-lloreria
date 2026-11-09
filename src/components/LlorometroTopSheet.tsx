@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef, useState } from 'react'
+﻿import React, { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useDragControls } from 'framer-motion'
 import * as Slider from '@radix-ui/react-slider'
@@ -84,7 +84,7 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 bg-[#0E131F]/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 bg-[#0E131F]/70 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -97,7 +97,7 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
               role="dialog"
               aria-modal="true"
               aria-labelledby={titleId}
-              className="relative w-full rounded-b-[32px] border-x border-b border-white/5 bg-[#161F33] px-6 pb-9 pt-[max(1.5rem,env(safe-area-inset-top))] text-center shadow-2xl shadow-black/50"
+              className="relative w-full rounded-b-[32px] border-x border-b border-white/5 bg-[#161F33] px-6 pb-[max(2.25rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] text-center shadow-2xl shadow-black/50 will-change-transform"
               initial={{ y: '-100%' }}
               animate={{ y: 0 }}
               exit={{ y: '-100%' }}
@@ -198,4 +198,5 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
 }
 
 export default LlorometroTopSheet
+
 

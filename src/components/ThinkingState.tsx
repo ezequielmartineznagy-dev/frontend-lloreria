@@ -1,4 +1,4 @@
-import React from 'react'
+﻿import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Gotita } from './Gotita'
 
@@ -21,7 +21,7 @@ export const ThinkingState: React.FC<ThinkingStateProps> = ({
         aria-live="polite"
         className={
           overlay
-            ? 'fixed inset-0 z-40 flex flex-col items-center justify-center gap-4 bg-[#0E131F]/85 backdrop-blur-sm'
+            ? 'fixed inset-0 z-40 flex flex-col items-center justify-center gap-4 bg-[#0E131F]/70 backdrop-blur-md'
             : 'flex flex-col items-center justify-center gap-4'
         }
         initial={{ opacity: 0 }}
@@ -44,4 +44,5 @@ export const ThinkingState: React.FC<ThinkingStateProps> = ({
 )
 
 export default ThinkingState
+
 

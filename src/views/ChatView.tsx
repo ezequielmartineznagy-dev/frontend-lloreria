@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+﻿import React, { useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { ArrowLeft, Mic, Send } from 'lucide-react'
 import { Gotita } from '../components/Gotita'
 
@@ -39,7 +40,13 @@ export const ChatView: React.FC<ChatViewProps> = ({
   }
 
   return (
-    <main className="h-[100dvh] w-full bg-[#0E131F]">
+    <motion.main
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className="h-[100dvh] w-full bg-[#0E131F]"
+    >
       <div className="w-full max-w-md mx-auto h-full flex flex-col justify-between">
         {/* Top bar */}
         <header className="flex items-center justify-between py-4 px-6 border-b border-[#161F33]">
@@ -65,7 +72,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         </header>
 
         {/* Mensajes */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
+        <div ref={scrollRef} className="no-scrollbar flex-1 overflow-y-auto px-6 py-6">
           <ul className="space-y-4" aria-live="polite" aria-label="Conversación con La Gotita">
             {messages.map((m, i) => {
               const startsRun = messages[i - 1]?.sender !== m.sender
@@ -75,7 +82,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   <li key={m.id} className="flex items-start gap-2.5 max-w-[85%]">
                     <Gotita size={26} className="flex-shrink-0 mt-1" />
                     <p
-                      className={`bg-[#161F33] rounded-2xl ${
+                      className={`selectable bg-[#161F33] rounded-2xl ${
                         startsRun ? 'rounded-tl-none' : ''
                       } p-4 text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif]`}
                     >
@@ -88,7 +95,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               return (
                 <li key={m.id} className="flex flex-col items-end max-w-[85%] ml-auto">
                   <p
-                    className={`bg-[#20293A] rounded-2xl ${
+                    className={`selectable bg-[#20293A] rounded-2xl ${
                       startsRun ? 'rounded-tr-none' : ''
                     } p-4 text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif]`}
                   >
@@ -149,8 +156,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
           </form>
         </div>
       </div>
-    </main>
+    </motion.main>
   )
 }
 
 export default ChatView
+

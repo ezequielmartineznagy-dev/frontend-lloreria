@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef, useState } from 'react'
+﻿import React, { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -85,7 +85,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#0E131F]/80 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#0E131F]/70 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -97,7 +97,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="bg-[#161F33] rounded-[32px] p-6 w-full max-w-sm border border-white/5 shadow-2xl shadow-black/40"
+            className="bg-[#161F33] rounded-[32px] p-6 w-full max-w-sm border border-white/5 shadow-2xl shadow-black/50 will-change-transform"
             initial={{ opacity: 0, scale: 0.92, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
@@ -146,4 +146,5 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 }
 
 export default EditProfileModal
+
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef } from 'react'
+﻿import React, { useEffect, useId, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Share2 } from 'lucide-react'
@@ -76,7 +76,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#0E131F]/85 backdrop-blur-[3px]"
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#0E131F]/70 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -89,7 +89,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
             aria-modal="true"
             aria-labelledby={labelId}
             aria-describedby={textId}
-            className="w-full max-w-sm bg-[#161F33] border border-white/5 rounded-[32px] p-6 md:p-8 flex flex-col items-center text-center shadow-2xl shadow-black/40"
+            className="w-full max-w-sm bg-[#161F33] border border-white/5 rounded-[32px] p-6 md:p-8 flex flex-col items-center text-center shadow-2xl shadow-black/50 will-change-transform"
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
@@ -140,3 +140,4 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
 }
 
 export default DiagnosticModal
+

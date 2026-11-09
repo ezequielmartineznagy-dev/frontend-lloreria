@@ -1,4 +1,5 @@
 ﻿import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
 import { GotaItem } from '../components/GotaItem'
 import { LluviaBackground } from '../components/LluviaBackground'
@@ -169,7 +170,13 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, drops: h
   }, [])
 
   return (
-    <main className="relative h-[100dvh] w-full overflow-hidden bg-[#0E131F]">
+    <motion.main
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className="relative h-[100dvh] w-full overflow-hidden bg-[#0E131F]"
+    >
       <div className="@container relative mx-auto h-full w-full max-w-md overflow-hidden">
         <LluviaBackground />
 
@@ -247,11 +254,12 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, drops: h
           ))}
         </ul>
       </div>
-    </main>
+    </motion.main>
   )
 }
 
 export default LluviaFeedView
+
 
 
 

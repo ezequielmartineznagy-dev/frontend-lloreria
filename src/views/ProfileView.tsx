@@ -1,5 +1,6 @@
 ﻿import React, { useState } from 'react'
 import * as Switch from '@radix-ui/react-switch'
+import { motion } from 'framer-motion'
 import { ArrowLeft, Pencil } from 'lucide-react'
 import { EditProfileModal } from '../components/EditProfileModal'
 import { Gotita } from '../components/Gotita'
@@ -53,7 +54,13 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   ]
 
   return (
-    <main className="h-[100dvh] w-full overflow-y-auto bg-[#0E131F]">
+    <motion.main
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      className="no-scrollbar h-[100dvh] w-full overflow-y-auto bg-[#0E131F]"
+    >
       <div className="w-full max-w-md mx-auto min-h-full px-6 py-6 flex flex-col">
         <header className="flex items-center justify-between mb-8">
           <button
@@ -182,10 +189,11 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           setIsEditProfileOpen(false)
         }}
       />
-    </main>
+    </motion.main>
   )
 }
 
 export default ProfileView
+
 
 

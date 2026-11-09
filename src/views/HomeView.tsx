@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { User } from 'lucide-react'
 import { Gotita } from '../components/Gotita'
@@ -76,3 +76,4 @@ interface HomeViewProps {
 }
 
 export default HomeView
+
