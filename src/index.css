@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  --font-quicksand: 'Quicksand', sans-serif;
+  --font-lato: 'Lato', sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  background-color: #0E131F;
+  color: #FFFFFF;
+}
