@@ -18,3 +18,67 @@ body,
   background-color: #0E131F;
   color: #FFFFFF;
 }
+
+/* ---- Muro de los Lloros (lluvia) ---- */
+@keyframes lloro-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -25dvh, 0);
+  }
+  8% {
+    opacity: var(--lloro-opacity, 1);
+  }
+  90% {
+    opacity: var(--lloro-opacity, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, calc(100dvh - 11rem), 0);
+  }
+}
+
+@keyframes lloro-streak {
+  from {
+    transform: translate3d(0, -20dvh, 0);
+  }
+  to {
+    transform: translate3d(0, 110dvh, 0);
+  }
+}
+
+@keyframes lloro-breathe {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes lloro-ring {
+  from {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(0.2);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) scale(1.7);
+  }
+}
+
+@keyframes lloro-spark {
+  from {
+    opacity: 0.8;
+    transform: translate(-50%, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), -26px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lluvia-bg {
+    display: none;
+  }
+}
