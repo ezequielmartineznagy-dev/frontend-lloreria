@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { DiagnosticModal } from './components/DiagnosticModal'
 import { LlorometroTopSheet } from './components/LlorometroTopSheet'
 import { ThinkingState } from './components/ThinkingState'
@@ -104,39 +105,47 @@ function App() {
 
           return (
     <div className="max-w-md mx-auto min-h-[100dvh] bg-[#0E131F] relative overflow-hidden font-['Lato']">
-      {currentScreen === 'home' && (
-        <HomeView onSubmitDraft={handleSubmitDraft} onOpenProfile={() => setCurrentScreen('profile')} />
-      )}
+      <AnimatePresence mode="wait">
+        {currentScreen === 'home' && (
+          <HomeView
+            key="home"
+            onSubmitDraft={handleSubmitDraft}
+            onOpenProfile={() => setCurrentScreen('profile')}
+          />
+        )}
 
-      {currentScreen === 'chat' && (
-        <ChatView
-          messages={messages}
-          onBack={goHome}
-          onSendMessage={handleSendMessage}
-          // TODO: grabación real; por ahora simula una nota de voz
-          onVoiceRecord={() => handleSendMessage('🎤 Nota de voz')}
-        />
-      )}
+        {currentScreen === 'chat' && (
+          <ChatView
+            key="chat"
+            messages={messages}
+            onBack={goHome}
+            onSendMessage={handleSendMessage}
+            // TODO: grabación real; por ahora simula una nota de voz
+            onVoiceRecord={() => handleSendMessage('🎤 Nota de voz')}
+          />
+        )}
 
-      {currentScreen === 'feed' && <LluviaFeedView drops={drops} onBack={goHome} />}
+        {currentScreen === 'feed' && <LluviaFeedView key="feed" drops={drops} onBack={goHome} />}
 
-      {currentScreen === 'profile' && (
-        // TODO: usuario, estadísticas y alarma reales desde el backend
-        <ProfileView
-          onBack={goHome}
-          username={username}
-          stats={{ volumen: '3.8 L', dramaPromedio: '7.2', rachaActiva: '14 días' }}
-          onSaveUsername={setUsername}
-          currentTheme={theme}
-          onThemeChange={setTheme}
-          alarmTime="20:00 hs"
-          isAlarmEnabled={alarmEnabled}
-          onToggleAlarm={setAlarmEnabled}
-          onClearHistory={() => {
-            if (window.confirm('¿Borrar todo tu historial de penas?')) setMessages([])
-          }}
-        />
-      )}
+        {currentScreen === 'profile' && (
+          // TODO: usuario, estadísticas y alarma reales desde el backend
+          <ProfileView
+            key="profile"
+            onBack={goHome}
+            username={username}
+            stats={{ volumen: '3.8 L', dramaPromedio: '7.2', rachaActiva: '14 días' }}
+            onSaveUsername={setUsername}
+            currentTheme={theme}
+            onThemeChange={setTheme}
+            alarmTime="20:00 hs"
+            isAlarmEnabled={alarmEnabled}
+            onToggleAlarm={setAlarmEnabled}
+            onClearHistory={() => {
+              if (window.confirm('¿Borrar todo tu historial de penas?')) setMessages([])
+            }}
+          />
+        )}
+      </AnimatePresence>
 
       <ThinkingState isVisible={isThinking} />
 

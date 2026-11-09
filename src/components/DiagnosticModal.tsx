@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useId, useRef } from 'react'
+import React, { useEffect, useId, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Share2 } from 'lucide-react'

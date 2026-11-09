@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useId, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useDragControls } from 'framer-motion'
 import * as Slider from '@radix-ui/react-slider'
