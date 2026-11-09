@@ -170,22 +170,23 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, drops: h
   }, [])
 
   return (
-    <motion.main
+    <motion.div
+      role="main"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="relative h-[100dvh] w-full overflow-hidden bg-[#0E131F]"
+      className="relative min-h-[100dvh] h-[100dvh] w-full overflow-hidden bg-[#0E131F] select-none"
     >
       <div className="@container relative mx-auto h-full w-full max-w-md overflow-hidden">
         <LluviaBackground />
 
-        <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between px-6 py-6">
+        <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between px-6 py-6 select-none">
           <button
             type="button"
             onClick={onBack}
             aria-label="Volver"
-            className="pointer-events-auto mt-1 rounded-full text-[#8E9CAE] transition-colors hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
+            className="pointer-events-auto mt-1 rounded-full text-[#8E9CAE] transition-all duration-150 active:scale-[0.96] hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
           >
             <ArrowLeft size={24} aria-hidden="true" />
           </button>
@@ -254,7 +255,7 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, drops: h
           ))}
         </ul>
       </div>
-    </motion.main>
+    </motion.div>
   )
 }
 

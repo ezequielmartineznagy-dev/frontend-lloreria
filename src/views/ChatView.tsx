@@ -40,21 +40,22 @@ export const ChatView: React.FC<ChatViewProps> = ({
   }
 
   return (
-    <motion.main
+    <motion.div
+      role="main"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="h-[100dvh] w-full bg-[#0E131F]"
+      className="min-h-[100dvh] h-[100dvh] w-full bg-[#0E131F] select-none"
     >
       <div className="w-full max-w-md mx-auto h-full flex flex-col justify-between">
         {/* Top bar */}
-        <header className="flex items-center justify-between py-4 px-6 border-b border-[#161F33]">
+        <header className="flex items-center justify-between py-4 px-6 border-b border-[#161F33] select-none">
           <button
             type="button"
             onClick={onBack}
             aria-label="Volver"
-            className="text-[#8E9CAE] hover:text-white transition-colors cursor-pointer rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
+            className="text-[#8E9CAE] hover:text-white transition-all duration-150 active:scale-[0.96] cursor-pointer rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
           >
             <ArrowLeft size={24} aria-hidden="true" />
           </button>
@@ -84,7 +85,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                     <p
                       className={`selectable bg-[#161F33] rounded-2xl ${
                         startsRun ? 'rounded-tl-none' : ''
-                      } p-4 text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif]`}
+                      } p-4 text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] select-text`}
                     >
                       {m.text}
                     </p>
@@ -97,7 +98,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   <p
                     className={`selectable bg-[#20293A] rounded-2xl ${
                       startsRun ? 'rounded-tr-none' : ''
-                    } p-4 text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif]`}
+                    } p-4 text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] select-text`}
                   >
                     {m.text}
                   </p>
@@ -108,7 +109,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
         </div>
 
         {/* Barra de entrada */}
-        <div className="px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-2 bg-[#0E131F]">
+        <div className="px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-2 bg-[#0E131F]">
           <form
             onSubmit={handleSubmit}
             className="flex items-center justify-between bg-[#161F33] rounded-full px-5 py-3.5 shadow-lg shadow-black/20"
@@ -117,7 +118,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
             <div className="flex-1 flex flex-col min-w-0">
               <label
                 htmlFor="chat-draft"
-                className="font-['Quicksand',sans-serif] text-[14px] text-white/90"
+                className="font-['Quicksand',sans-serif] text-[14px] text-white/90 select-none"
               >
                 ¿Qué pasó hoy?
               </label>
@@ -128,18 +129,18 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="Escribí tu drama..."
                 autoComplete="off"
-                className="font-['Lato',sans-serif] text-sm text-[#8E9CAE] focus:outline-none bg-transparent placeholder-[#8E9CAE]/70 caret-[#4EA8DE] w-full"
+                className="font-['Lato',sans-serif] text-sm text-[#8E9CAE] focus:outline-none bg-transparent placeholder-[#8E9CAE]/70 caret-[#4EA8DE] w-full select-text"
               />
             </div>
 
-            <div className="flex items-center">
+            <div className="flex items-center select-none">
               <span className="h-6 w-[1px] bg-white/10 mx-3" aria-hidden="true" />
               {onVoiceRecord && (
                 <button
                   type="button"
                   onClick={onVoiceRecord}
                   aria-label="Grabar mensaje de voz"
-                  className="text-[#8E9CAE] hover:text-[#4EA8DE] cursor-pointer transition-colors rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
+                  className="text-[#8E9CAE] hover:text-[#4EA8DE] cursor-pointer transition-all duration-150 active:scale-[0.96] rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
                 >
                   <Mic size={20} aria-hidden="true" />
                 </button>
@@ -148,7 +149,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 type="submit"
                 disabled={!draft.trim()}
                 aria-label="Enviar mensaje"
-                className="ml-3 text-[#4EA8DE] hover:text-[#3ba0de] cursor-pointer transition-colors rounded-full disabled:opacity-40 disabled:cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
+                className="ml-3 text-[#4EA8DE] hover:text-[#3ba0de] cursor-pointer transition-all duration-150 active:scale-[0.96] rounded-full disabled:opacity-40 disabled:active:scale-100 disabled:cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
               >
                 <Send size={20} aria-hidden="true" />
               </button>
@@ -156,9 +157,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
           </form>
         </div>
       </div>
-    </motion.main>
+    </motion.div>
   )
 }
 
 export default ChatView
-

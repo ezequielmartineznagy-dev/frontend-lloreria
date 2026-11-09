@@ -107,7 +107,7 @@ export const LloroInput: React.FC<LloroInputProps> = ({
   }
 
   const iconButton =
-    'flex-shrink-0 rounded-full transition-colors duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]'
+    'flex-shrink-0 rounded-full transition-all duration-150 active:scale-[0.96] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]'
 
   return (
     <div className={`w-full ${className}`}>
@@ -171,7 +171,7 @@ export const LloroInput: React.FC<LloroInputProps> = ({
             <button
               type="submit"
               disabled={!hasText}
-              className={`${iconButton} -my-1 flex h-8 w-8 items-center justify-center bg-[#4EA8DE] text-[#0E131F] hover:brightness-110 disabled:bg-[#8E9CAE]/15 disabled:text-[#8E9CAE] disabled:cursor-default disabled:hover:brightness-100`}
+              className={`${iconButton} -my-1 flex h-8 w-8 items-center justify-center bg-[#4EA8DE] text-[#0E131F] hover:brightness-110 disabled:active:scale-100 disabled:bg-[#8E9CAE]/15 disabled:text-[#8E9CAE] disabled:cursor-default disabled:hover:brightness-100`}
               aria-label="Enviar mensaje"
               title="Enviar"
             >

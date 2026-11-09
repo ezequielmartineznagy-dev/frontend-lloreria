@@ -97,7 +97,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
-            className="bg-[#161F33] rounded-[32px] p-6 w-full max-w-sm border border-white/5 shadow-2xl shadow-black/50 will-change-transform"
+            className="bg-[#161F33] rounded-[32px] p-6 w-full max-w-sm border border-white/5 shadow-2xl shadow-black/50 will-change-transform select-none"
             initial={{ opacity: 0, scale: 0.92, y: 16 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
@@ -123,7 +123,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
                 maxLength={MAX_LENGTH}
                 onChange={(e) => setName(e.target.value)}
                 autoComplete="nickname"
-                className="mt-1 w-full border-b border-[#8E9CAE] bg-[#0E131F] px-3 py-2.5 font-['Lato',sans-serif] text-base text-white caret-[#4EA8DE] rounded-t-lg focus:border-[#4EA8DE] focus:outline-none transition-colors"
+                className="mt-1 w-full border-b border-[#8E9CAE] bg-[#0E131F] px-3 py-2.5 font-['Lato',sans-serif] text-base text-white caret-[#4EA8DE] rounded-t-lg focus:border-[#4EA8DE] focus:outline-none transition-colors select-text"
               />
               <p className="mt-1 text-right font-['Lato',sans-serif] text-[11px] text-[#8E9CAE]" aria-hidden="true">
                 {name.length}/{MAX_LENGTH}
@@ -132,7 +132,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               <button
                 type="submit"
                 disabled={!canSave}
-                className="bg-[#4EA8DE] text-[#0E131F] rounded-full py-3 w-full font-['Quicksand',sans-serif] font-bold mt-6 transition-all hover:bg-[#3ba0de] active:scale-[0.98] cursor-pointer disabled:opacity-40 disabled:cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#161F33]"
+                className="bg-[#4EA8DE] text-[#0E131F] rounded-full py-3 w-full font-['Quicksand',sans-serif] font-bold mt-6 transition-all duration-150 hover:bg-[#3ba0de] active:scale-[0.96] cursor-pointer disabled:opacity-40 disabled:active:scale-100 disabled:cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#161F33]"
               >
                 Guardar
               </button>

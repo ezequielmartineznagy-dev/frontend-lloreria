@@ -117,7 +117,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
               type="button"
               onClick={onAcceptDestiny}
               aria-label="Aceptar mi destino"
-              className="w-full py-4 rounded-full bg-[#4EA8DE] hover:bg-[#3ba0de] active:scale-[0.98] transition-all font-['Quicksand',sans-serif] font-bold text-sm tracking-wide uppercase text-[#0E131F] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#161F33]"
+              className="w-full py-4 rounded-full bg-[#4EA8DE] hover:bg-[#3ba0de] active:scale-[0.96] transition-all duration-150 font-['Quicksand',sans-serif] font-bold text-sm tracking-wide uppercase text-[#0E131F] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#161F33]"
             >
               Aceptar mi destino
             </button>
@@ -126,7 +126,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
               type="button"
               onClick={onShareDrama}
               aria-label="Compartir drama"
-              className="mt-5 inline-flex items-center gap-2 text-[#8E9CAE] hover:text-white transition-colors cursor-pointer rounded-full px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
+              className="mt-5 inline-flex items-center gap-2 text-[#8E9CAE] hover:text-white transition-all duration-150 active:scale-[0.96] cursor-pointer rounded-full px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
             >
               <span className="font-['Lato',sans-serif] text-sm">Compartir drama</span>
               <Share2 size={16} aria-hidden="true" />

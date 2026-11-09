@@ -175,7 +175,7 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
               <button
                 type="button"
                 onClick={() => onRelease(level)}
-                className="mt-6 rounded-full bg-[#4EA8DE] px-10 py-3.5 font-['Quicksand',sans-serif] text-base font-bold uppercase tracking-wide text-[#0E131F] transition-all hover:bg-[#3ba0de] active:scale-[0.98] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#161F33]"
+                className="mt-6 rounded-full bg-[#4EA8DE] px-10 py-3.5 font-['Quicksand',sans-serif] text-base font-bold uppercase tracking-wide text-[#0E131F] transition-all duration-150 hover:bg-[#3ba0de] active:scale-[0.96] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#161F33]"
               >
                 Soltar a la lluvia
               </button>
