@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+﻿import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { GotaItem } from '../components/GotaItem'
 import { LluviaBackground } from '../components/LluviaBackground'
+import { LlorometroTopSheet } from '../components/LlorometroTopSheet'
 import {
   LANES,
   MOCK_LLOROS,
@@ -16,6 +17,8 @@ interface LluviaFeedViewProps {
   onBack: () => void
   /** Lloros de la comunidad. TODO: reemplazar por datos reales del backend. */
   lloros?: { text: string; level: number }[]
+  /** Si viene, se abre el Llorómetro para soltar este lloro propio a la lluvia. */
+  ownLloro?: string
 }
 
 interface Splash {
@@ -37,7 +40,8 @@ const shuffle = <T,>(items: T[]) => {
   return a
 }
 
-export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros = MOCK_LLOROS }) => {
+export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros = MOCK_LLOROS, ownLloro }) => {
+  const [sheetOpen, setSheetOpen] = useState(Boolean(ownLloro))
   const [drops, setDrops] = useState<(LloroDrop & { lane: number })[]>([])
   const [splashes, setSplashes] = useState<Splash[]>([])
   const [expandedId, setExpandedId] = useState<string | null>(null)
@@ -50,16 +54,16 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros =
   const dropTexts = useRef(new Map<string, string>())
 
   const spawn = useCallback(
-    (delaySec: number) => {
-      if (timings.current.size >= MAX_VISIBLE || lloros.length === 0) return
+    (delaySec: number, forced?: { text: string; level: number }): boolean => {
+      if (!forced && (timings.current.size >= MAX_VISIBLE || lloros.length === 0)) return false
 
       const onScreen = new Set(
         [...timings.current.keys()].map((id) => dropTexts.current.get(id)),
       )
-      if (queue.current.length === 0) queue.current = shuffle(lloros)
-      const idx = queue.current.findIndex((l) => !onScreen.has(l.text))
-      if (idx === -1) return
-      const lloro = queue.current[idx]
+      if (!forced && queue.current.length === 0) queue.current = shuffle(lloros)
+      const idx = forced ? -1 : queue.current.findIndex((l) => !onScreen.has(l.text))
+      if (!forced && idx === -1) return false
+      const lloro = forced ?? queue.current[idx]
 
       const now = performance.now()
       const travel = window.innerHeight * 1.25 - 176
@@ -75,12 +79,13 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros =
         if (!canSpawn(others, timing, travel, itemHeight(drop.scale))) continue
 
         counter.current += 1
-        queue.current.splice(idx, 1)
+        if (!forced) queue.current.splice(idx, 1)
         timings.current.set(id, { ...timing, lane })
         dropTexts.current.set(id, drop.text)
         setDrops((prev) => [...prev, { ...drop, lane }])
-        return
+        return true
       }
+      return false
     },
     [lloros],
   )
@@ -103,6 +108,28 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros =
       setSplashes([])
     }
   }, [spawn])
+
+  const retryTimers = useRef<number[]>([])
+
+  const handleRelease = useCallback(
+    (level: number) => {
+      setSheetOpen(false)
+      if (!ownLloro) return
+      const mine = { text: ownLloro, level }
+      // Si el carril está ocupado, reintenta unos instantes hasta que haya lugar
+      const attempt = (tries: number) => {
+        if (spawn(0.4, mine) || tries <= 0) return
+        retryTimers.current.push(window.setTimeout(() => attempt(tries - 1), 600))
+      }
+      retryTimers.current.push(window.setTimeout(() => attempt(12), 450))
+    },
+    [ownLloro, spawn],
+  )
+
+  useEffect(() => {
+    const timers = retryTimers.current
+    return () => timers.forEach(window.clearTimeout)
+  }, [])
 
   const release = useCallback((id: string) => {
     const t = timings.current.get(id)
@@ -218,6 +245,12 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros =
           </div>
         ))}
 
+        <LlorometroTopSheet
+          isOpen={sheetOpen}
+          onClose={() => setSheetOpen(false)}
+          onRelease={handleRelease}
+        />
+
         {/* Alternativa accesible a la animación */}
         <ul className="sr-only" aria-label="Lloros de la comunidad">
           {lloros.map((l) => (
@@ -232,3 +265,5 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros =
 }
 
 export default LluviaFeedView
+
+

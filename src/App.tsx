@@ -14,6 +14,7 @@ const MOCK_REPLIES = [
 function App() {
   const [view, setView] = useState<'home' | 'chat' | 'profile' | 'lluvia'>('home')
   const [theme, setTheme] = useState<'claro' | 'oscuro' | 'automatico'>('oscuro')
+  const [ownLloro, setOwnLloro] = useState<string | undefined>()
   const [alarmEnabled, setAlarmEnabled] = useState(true)
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const nextId = useRef(1)
@@ -35,7 +36,7 @@ function App() {
   }
 
   if (view === 'lluvia') {
-    return <LluviaFeedView onBack={() => setView('home')} />
+    return <LluviaFeedView ownLloro={ownLloro} onBack={() => setView('home')} />
   }
 
   if (view === 'profile') {
@@ -73,7 +74,10 @@ function App() {
   return (
     <HomeView
       onOpenProfile={() => setView('profile')}
-      onShareDrama={() => setView('lluvia')}
+      onShareDrama={(userMessage) => {
+        setOwnLloro(userMessage)
+        setView('lluvia')
+      }}
       onAcceptDestiny={(userMessage, diagnosis) => {
         nextId.current = 1
         setMessages([
@@ -87,5 +91,6 @@ function App() {
 }
 
 export default App
+
 
 

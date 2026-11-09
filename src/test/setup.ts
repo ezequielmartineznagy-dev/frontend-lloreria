@@ -4,3 +4,11 @@ import { afterEach } from 'vitest'
 
 afterEach(() => cleanup())
 
+
+// Radix Slider necesita ResizeObserver, que jsdom no implementa.
+class ResizeObserverStub {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+globalThis.ResizeObserver ??= ResizeObserverStub as unknown as typeof ResizeObserver

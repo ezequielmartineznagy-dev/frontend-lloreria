@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+﻿import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { User } from 'lucide-react'
 import { Gotita } from '../components/Gotita'
@@ -10,7 +10,7 @@ interface HomeViewProps {
   onAcceptDestiny: (userMessage: string, diagnosis: string) => void
   onOpenProfile?: () => void
   /** Lleva al Muro de los Lloros. Si no se pasa, se comparte el texto con la API nativa. */
-  onShareDrama?: () => void
+  onShareDrama?: (userMessage: string) => void
 }
 
   export const HomeView: React.FC<HomeViewProps> = ({ onAcceptDestiny, onOpenProfile, onShareDrama }) => {
@@ -32,7 +32,7 @@ interface HomeViewProps {
       if (!diagnosis) return
       if (onShareDrama) {
         setDiagnosis(null)
-        onShareDrama()
+        onShareDrama(lastMessage)
         return
       }
       const text = `Mi diagnóstico en La Llorería: «${diagnosis}»`
@@ -124,6 +124,7 @@ interface HomeViewProps {
   }
 
   export default HomeView
+
 
 
 
