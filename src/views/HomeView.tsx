@@ -1,57 +1,29 @@
-﻿import React, { useState } from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { User } from 'lucide-react'
 import { Gotita } from '../components/Gotita'
 import { LloroInput } from '../components/LloroInput'
-import { DiagnosticModal } from '../components/DiagnosticModal'
 
 interface HomeViewProps {
-  /** Navega al chat privado con Gotita, enviando el desahogo original y el diagnóstico. */
-  onAcceptDestiny: (userMessage: string, diagnosis: string) => void
+  /** Se llama con el texto que el usuario quiere desahogar (escrito o nota de voz). */
+  onSubmitDraft: (text: string) => void
   onOpenProfile?: () => void
-  /** Lleva al Muro de los Lloros. Si no se pasa, se comparte el texto con la API nativa. */
-  onShareDrama?: (userMessage: string) => void
 }
 
-  export const HomeView: React.FC<HomeViewProps> = ({ onAcceptDestiny, onOpenProfile, onShareDrama }) => {
+  export const HomeView: React.FC<HomeViewProps> = ({ onSubmitDraft, onOpenProfile }) => {
     const [inputText, setInputText] = useState('')
-    const [diagnosis, setDiagnosis] = useState<string | null>(null)
-    const [lastMessage, setLastMessage] = useState('')
 
     const handleSendMessage = () => {
-      if (!inputText.trim()) return
-      console.log('Mensaje enviado:', inputText)
-      // TODO: reemplazar por el diagnóstico real del backend
-      setLastMessage(inputText.trim())
-      setDiagnosis('Claramente el universo conspira contra vos. O tal vez simplemente necesitás dormir ocho horas y tomar agua. Es un 50/50.')
+      const text = inputText.trim()
+      if (!text) return
+      onSubmitDraft(text)
       setInputText('')
-    }
-
-    // TODO: reemplazar por el flujo del Llorómetro / Muro cuando esté definido
-    const handleShareDrama = async () => {
-      if (!diagnosis) return
-      if (onShareDrama) {
-        setDiagnosis(null)
-        onShareDrama(lastMessage)
-        return
-      }
-      const text = `Mi diagnóstico en La Llorería: «${diagnosis}»`
-      try {
-        if (navigator.share) {
-          await navigator.share({ title: 'La Llorería', text })
-        } else {
-          await navigator.clipboard.writeText(text)
-        }
-      } catch {
-        // El usuario canceló el diálogo de compartir o el portapapeles no está disponible
-      }
     }
 
     const handleVoiceRecord = (audio: Blob) => {
       console.log('Audio grabado:', audio.type, audio.size)
-      // TODO: enviar el audio al backend para transcribir y diagnosticar
-      setLastMessage('🎤 Nota de voz')
-      setDiagnosis('Claramente el universo conspira contra vos. O tal vez simplemente necesitás dormir ocho horas y tomar agua. Es un 50/50.')
+      // TODO: enviar el audio al backend para transcribirlo
+      onSubmitDraft('🎤 Nota de voz')
     }
 
     return (
@@ -77,58 +49,30 @@ interface HomeViewProps {
             </p>
           </header>
 
-          {/* Sección Central con Mascota Gotita */}
-          <section
-            className="flex-1 flex items-center justify-center py-6"
-            aria-label="Mascota Gotita"
-          >
-            <motion.div
-              animate={{
-                y: [0, -10, 0],
-                scale: [1, 1.015, 1],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              className="flex items-center justify-center drop-shadow-[0_10px_25px_rgba(78,168,222,0.15)]"
-            >
+                {/* Sección Central con Mascota Gotita */}
+        <section className="flex-1 flex items-center justify-center py-6" aria-label="Mascota Gotita">
+                <motion.div
+                  animate={{ y: [0, -10, 0], scale: [1, 1.015, 1] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                  className="flex items-center justify-center drop-shadow-[0_10px_25px_rgba(78,168,222,0.15)]"
+                >
               <Gotita size={210} />
             </motion.div>
           </section>
 
-          {/* Footer con el campo de texto / acción */}
-          <footer className="w-full pt-2">
-            <LloroInput
-              value={inputText}
-              onChange={setInputText}
-              onSubmit={handleSendMessage}
-              onVoiceRecord={handleVoiceRecord}
-              placeholder="¿Qué pasó hoy?"
-            />
-          </footer>
-        </div>
-        <DiagnosticModal
-          isOpen={diagnosis !== null}
-          diagnosisText={diagnosis ?? ''}
-          onAcceptDestiny={() => {
-            if (diagnosis) onAcceptDestiny(lastMessage, diagnosis)
-            setDiagnosis(null)
-          }}
-          onShareDrama={handleShareDrama}
-          onClose={() => setDiagnosis(null)}
-        />
-      </main>
-    )
-  }
+  {/* Footer con el campo de texto / acción */ }
+  <footer className="w-full pt-2">
+    <LloroInput
+      value={inputText}
+      onChange={setInputText}
+      onSubmit={handleSendMessage}
+      onVoiceRecord={handleVoiceRecord}
+      placeholder="¿Qué pasó hoy?"
+    />
+  </footer>
+      </div >
+    </main >
+  )
+}
 
-  export default HomeView
-
-
-
-
-
-
-
-
+export default HomeView

@@ -1,6 +1,7 @@
-import React from 'react'
+﻿import React, { useState } from 'react'
 import * as Switch from '@radix-ui/react-switch'
 import { ArrowLeft, Pencil } from 'lucide-react'
+import { EditProfileModal } from '../components/EditProfileModal'
 import { Gotita } from '../components/Gotita'
 
 type Theme = 'claro' | 'oscuro' | 'automatico'
@@ -15,7 +16,8 @@ interface ProfileViewProps {
   onBack: () => void
   username: string
   stats: ProfileStats
-  onEditProfile: () => void
+  /** Se llama con el nuevo nombre cuando el usuario guarda desde el modal de edición. */
+  onSaveUsername: (newName: string) => void
   onThemeChange: (theme: Theme) => void
   currentTheme: Theme
   alarmTime: string // ej. "20:00 hs"
@@ -34,7 +36,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   onBack,
   username,
   stats,
-  onEditProfile,
+  onSaveUsername,
   onThemeChange,
   currentTheme,
   alarmTime,
@@ -42,6 +44,8 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   onToggleAlarm,
   onClearHistory,
 }) => {
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
+
   const statCards = [
     { value: stats.volumen, label: 'Volumen' },
     { value: stats.dramaPromedio, label: 'Drama promedio' },
@@ -73,7 +77,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           </h2>
           <button
             type="button"
-            onClick={onEditProfile}
+            onClick={() => setIsEditProfileOpen(true)}
             className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161F33] border border-[#8E9CAE]/20 text-xs font-['Lato',sans-serif] text-[#8E9CAE] hover:text-white transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
           >
             <Pencil size={11} aria-hidden="true" />
@@ -169,9 +173,19 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           </button>
         </footer>
       </div>
+      <EditProfileModal
+        isOpen={isEditProfileOpen}
+        onClose={() => setIsEditProfileOpen(false)}
+        currentUsername={username}
+        onSave={(newName) => {
+          onSaveUsername(newName)
+          setIsEditProfileOpen(false)
+        }}
+      />
     </main>
   )
 }
 
 export default ProfileView
+
 

@@ -2,10 +2,9 @@
 import { ArrowLeft } from 'lucide-react'
 import { GotaItem } from '../components/GotaItem'
 import { LluviaBackground } from '../components/LluviaBackground'
-import { LlorometroTopSheet } from '../components/LlorometroTopSheet'
+import type { LloroItem } from '../services/lloros'
 import {
   LANES,
-  MOCK_LLOROS,
   canSpawn,
   createDrop,
   itemHeight,
@@ -15,10 +14,8 @@ import {
 
 interface LluviaFeedViewProps {
   onBack: () => void
-  /** Lloros de la comunidad. TODO: reemplazar por datos reales del backend. */
-  lloros?: { text: string; level: number }[]
-  /** Si viene, se abre el Llorómetro para soltar este lloro propio a la lluvia. */
-  ownLloro?: string
+  /** Historial de lloros. El más reciente va primero; al agregarse uno nuevo, cae de inmediato. */
+  drops: LloroItem[]
 }
 
 interface Splash {
@@ -35,60 +32,64 @@ const shuffle = <T,>(items: T[]) => {
   const a = [...items]
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-      ;[a[i], a[j]] = [a[j], a[i]]
+    ;[a[i], a[j]] = [a[j], a[i]]
   }
   return a
 }
 
-export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros = MOCK_LLOROS, ownLloro }) => {
-  const [sheetOpen, setSheetOpen] = useState(Boolean(ownLloro))
+type PoolItem = { text: string; level: number }
+
+export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, drops: history }) => {
   const [drops, setDrops] = useState<(LloroDrop & { lane: number })[]>([])
   const [splashes, setSplashes] = useState<Splash[]>([])
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const timings = useRef(new Map<string, Timing & { lane: number; pausedAt?: number }>())
-  const queue = useRef<typeof lloros>([])
+  const pool = useRef<PoolItem[]>([])
+  const queue = useRef<PoolItem[]>([])
   const counter = useRef(0)
   const holdTimer = useRef<number | null>(null)
+  const retryTimers = useRef<number[]>([])
+  const seenNewest = useRef<string | undefined>(history[0]?.id)
   // Texto por id, para no repetir lloros visibles a la vez.
   const dropTexts = useRef(new Map<string, string>())
 
-  const spawn = useCallback(
-    (delaySec: number, forced?: { text: string; level: number }): boolean => {
-      if (!forced && (timings.current.size >= MAX_VISIBLE || lloros.length === 0)) return false
+  // El pool se mantiene en una ref para que `spawn` sea estable y no reinicie la lluvia.
+  useEffect(() => {
+    pool.current = history.map(({ text, level }) => ({ text, level }))
+  }, [history])
 
-      const onScreen = new Set(
-        [...timings.current.keys()].map((id) => dropTexts.current.get(id)),
-      )
-      if (!forced && queue.current.length === 0) queue.current = shuffle(lloros)
-      const idx = forced ? -1 : queue.current.findIndex((l) => !onScreen.has(l.text))
-      if (!forced && idx === -1) return false
-      const lloro = forced ?? queue.current[idx]
+  const spawn = useCallback((delaySec: number, forced?: PoolItem): boolean => {
+    if (!forced && (timings.current.size >= MAX_VISIBLE || pool.current.length === 0)) return false
 
-      const now = performance.now()
-      const travel = window.innerHeight * 1.25 - 176
+    const onScreen = new Set([...timings.current.keys()].map((id) => dropTexts.current.get(id)))
+    if (!forced && queue.current.length === 0) queue.current = shuffle(pool.current)
+    const idx = forced ? -1 : queue.current.findIndex((l) => !onScreen.has(l.text))
+    if (!forced && idx === -1) return false
+    const lloro = forced ?? queue.current[idx]
 
-      for (const lane of shuffle(LANES.map((_, i) => i))) {
-        const id = `d${counter.current}`
-        const drop = createDrop(id, lloro.text, lloro.level, lane, delaySec)
-        const timing: Timing = {
-          start: now + delaySec * 1000,
-          end: now + (delaySec + drop.speed) * 1000,
-        }
-        const others = [...timings.current.values()].filter((t) => t.lane === lane)
-        if (!canSpawn(others, timing, travel, itemHeight(drop.scale))) continue
+    const now = performance.now()
+    const travel = window.innerHeight * 1.25 - 176
 
-        counter.current += 1
-        if (!forced) queue.current.splice(idx, 1)
-        timings.current.set(id, { ...timing, lane })
-        dropTexts.current.set(id, drop.text)
-        setDrops((prev) => [...prev, { ...drop, lane }])
-        return true
+    for (const lane of shuffle(LANES.map((_, i) => i))) {
+      const id = `d${counter.current}`
+      const drop = createDrop(id, lloro.text, lloro.level, lane, delaySec)
+      const timing: Timing = {
+        start: now + delaySec * 1000,
+        end: now + (delaySec + drop.speed) * 1000,
       }
-      return false
-    },
-    [lloros],
-  )
+      const others = [...timings.current.values()].filter((t) => t.lane === lane)
+      if (!canSpawn(others, timing, travel, itemHeight(drop.scale))) continue
+
+      counter.current += 1
+      if (!forced) queue.current.splice(idx, 1)
+      timings.current.set(id, { ...timing, lane })
+      dropTexts.current.set(id, drop.text)
+      setDrops((prev) => [...prev, { ...drop, lane }])
+      return true
+    }
+    return false
+  }, [])
 
   useEffect(() => {
     const seeds = [0, 0.9, 1.8, 2.7, 3.6].map((d) => window.setTimeout(() => spawn(d), 0))
@@ -97,9 +98,11 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros =
     }, SPAWN_EVERY_MS)
     const timing = timings.current
     const texts = dropTexts.current
+    const retries = retryTimers.current
 
     return () => {
       seeds.forEach(window.clearTimeout)
+      retries.forEach(window.clearTimeout)
       window.clearInterval(interval)
       if (holdTimer.current !== null) window.clearTimeout(holdTimer.current)
       timing.clear()
@@ -109,28 +112,18 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros =
     }
   }, [spawn])
 
-  const retryTimers = useRef<number[]>([])
-
-  const handleRelease = useCallback(
-    (level: number) => {
-      setSheetOpen(false)
-      if (!ownLloro) return
-      const mine = { text: ownLloro, level }
-      // Si el carril está ocupado, reintenta unos instantes hasta que haya lugar
-      const attempt = (tries: number) => {
-        if (spawn(0.4, mine) || tries <= 0) return
-        retryTimers.current.push(window.setTimeout(() => attempt(tries - 1), 600))
-      }
-      retryTimers.current.push(window.setTimeout(() => attempt(12), 450))
-    },
-    [ownLloro, spawn],
-  )
-
+  // Un lloro nuevo en el historial cae enseguida; si el carril está ocupado, reintenta.
+  const newestId = history[0]?.id
   useEffect(() => {
-    const timers = retryTimers.current
-    return () => timers.forEach(window.clearTimeout)
-  }, [])
-
+    if (!newestId || newestId === seenNewest.current) return
+    seenNewest.current = newestId
+    const { text, level } = history[0]
+    const attempt = (tries: number) => {
+      if (spawn(0.4, { text, level }) || tries <= 0) return
+      retryTimers.current.push(window.setTimeout(() => attempt(tries - 1), 600))
+    }
+    retryTimers.current.push(window.setTimeout(() => attempt(12), 450))
+  }, [newestId, history, spawn])
   const release = useCallback((id: string) => {
     const t = timings.current.get(id)
     if (t?.pausedAt !== undefined) {
@@ -245,16 +238,10 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros =
           </div>
         ))}
 
-        <LlorometroTopSheet
-          isOpen={sheetOpen}
-          onClose={() => setSheetOpen(false)}
-          onRelease={handleRelease}
-        />
-
         {/* Alternativa accesible a la animación */}
         <ul className="sr-only" aria-label="Lloros de la comunidad">
-          {lloros.map((l) => (
-            <li key={l.text}>
+          {history.map((l) => (
+            <li key={l.id}>
               {l.text}. Nivel {l.level} de 10.
             </li>
           ))}
@@ -265,5 +252,6 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, lloros =
 }
 
 export default LluviaFeedView
+
 
 
