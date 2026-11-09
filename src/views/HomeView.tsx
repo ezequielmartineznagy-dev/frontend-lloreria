@@ -23,6 +23,21 @@ export const HomeView: React.FC<HomeViewProps> = ({ onAcceptDestiny }) => {
     setInputText('')
   }
 
+  // TODO: reemplazar por el flujo del Llorómetro / Muro cuando esté definido
+  const handleShareDrama = async () => {
+    if (!diagnosis) return
+    const text = `Mi diagnóstico en La Llorería: «${diagnosis}»`
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'La Llorería', text })
+      } else {
+        await navigator.clipboard.writeText(text)
+      }
+    } catch {
+      // El usuario canceló el diálogo de compartir o el portapapeles no está disponible
+    }
+  }
+
   const handleVoiceRecord = (audio: Blob) => {
     console.log('Audio grabado:', audio.type, audio.size)
     // TODO: enviar el audio al backend para transcribir y diagnosticar
@@ -82,7 +97,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onAcceptDestiny }) => {
           if (diagnosis) onAcceptDestiny(lastMessage, diagnosis)
           setDiagnosis(null)
         }}
-        onShareDrama={() => console.log('Compartir drama')}
+        onShareDrama={handleShareDrama}
         onClose={() => setDiagnosis(null)}
       />
     </main>
@@ -90,6 +105,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onAcceptDestiny }) => {
 }
 
 export default HomeView
+
 
 
 
