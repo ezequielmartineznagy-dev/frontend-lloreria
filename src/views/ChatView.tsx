@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Mic, Send, StopCircle, Trash2 } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { Gotita } from '../components/Gotita'
+import { LloroInput } from '../components/LloroInput'
 import { useAudioRecorder } from '../hooks/useAudioRecorder'
 
 export interface ChatMessage {
@@ -17,9 +18,6 @@ interface ChatViewProps {
   onVoiceRecord?: () => void
   onSubmitDraft?: (text: string) => void
 }
-
-const formatTime = (s: number) =>
-  `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
 
 export const ChatView: React.FC<ChatViewProps> = ({
   onBack,
@@ -60,24 +58,17 @@ export const ChatView: React.FC<ChatViewProps> = ({
     }
   }, [audioBlob, onSubmitDraft, onSendMessage, resetAudio])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (isRecording) {
-      stopRecording()
-      return
-    }
+  const handleSendMessage = () => {
     const text = draft.trim()
     if (!text) return
     onSendMessage(text)
     setDraft('')
   }
 
-  const handleMicClick = () => {
+  const handleStartRecording = () => {
     onVoiceRecord?.()
     startRecording()
   }
-
-  const canRecord = Boolean(onVoiceRecord || onSubmitDraft)
 
   return (
     <motion.div
@@ -142,106 +133,30 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   >
                     {m.text}
                   </p>
+                  <span className="text-[11px] text-[#8E9CAE]/70 mt-1 mr-1 font-['Lato',sans-serif]">
+                    Visto
+                  </span>
                 </li>
               )
             })}
           </ul>
         </div>
 
-        {/* Barra de entrada */}
-        <div className="px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-2 bg-[#0E131F]">
-          <form
-            onSubmit={handleSubmit}
-            className="flex items-center justify-between bg-[#161F33] rounded-full px-5 py-3.5 shadow-lg shadow-black/20"
-            aria-label="Enviar mensaje a La Gotita"
-          >
-            {isRecording ? (
-              <div className="flex items-center justify-between w-full">
-                {/* Botón cancelar */}
-                <button
-                  type="button"
-                  onClick={cancelRecording}
-                  aria-label="Cancelar grabación"
-                  className="p-1 text-[#8E9CAE] hover:text-[#C94A4A] cursor-pointer transition-colors rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
-                >
-                  <Trash2 size={20} />
-                </button>
-
-                {/* Indicador de grabación centrado */}
-                <div className="flex-1 flex items-center justify-center gap-2">
-                  <span
-                    className="w-2.5 h-2.5 bg-[#C94A4A] rounded-full animate-pulse"
-                    aria-hidden="true"
-                  />
-                  <span
-                    className="font-['Lato',sans-serif] font-bold text-[#C94A4A] text-sm md:text-base tabular-nums"
-                    role="timer"
-                    aria-live="off"
-                  >
-                    {formatTime(recordingTime)}
-                  </span>
-                </div>
-
-                {/* Botón detener / enviar */}
-                <button
-                  type="button"
-                  onClick={stopRecording}
-                  aria-label="Detener y enviar grabación"
-                  className="p-1 text-[#4EA8DE] hover:text-[#3ba0de] cursor-pointer transition-colors rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
-                >
-                  <StopCircle size={22} />
-                </button>
-              </div>
-            ) : (
-              <>
-                <div className="flex-1 flex flex-col min-w-0">
-                  <label
-                    htmlFor="chat-draft"
-                    className="font-['Quicksand',sans-serif] text-[14px] text-white/90 select-none"
-                  >
-                    ¿Qué pasó hoy?
-                  </label>
-                  <input
-                    id="chat-draft"
-                    type="text"
-                    value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
-                    placeholder="Escribí tu drama..."
-                    autoComplete="off"
-                    className="font-['Lato',sans-serif] text-sm text-[#8E9CAE] focus:outline-none bg-transparent placeholder-[#8E9CAE]/70 caret-[#4EA8DE] w-full select-text"
-                  />
-                </div>
-
-                <div className="flex items-center select-none">
-                  <span className="h-6 w-[1px] bg-white/10 mx-3" aria-hidden="true" />
-                  {canRecord && (
-                    <button
-                      type="button"
-                      onClick={handleMicClick}
-                      aria-label="Grabar mensaje de voz"
-                      className="text-[#8E9CAE] hover:text-[#4EA8DE] cursor-pointer transition-all duration-150 active:scale-[0.96] rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
-                    >
-                      <Mic size={20} aria-hidden="true" />
-                    </button>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={!draft.trim()}
-                    aria-label="Enviar mensaje"
-                    className="ml-3 text-[#4EA8DE] hover:text-[#3ba0de] cursor-pointer transition-all duration-150 active:scale-[0.96] rounded-full disabled:opacity-40 disabled:active:scale-100 disabled:cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
-                  >
-                    <Send size={20} aria-hidden="true" />
-                  </button>
-                </div>
-              </>
-            )}
-          </form>
-          {permissionError && (
-            <p role="alert" className="mt-2 px-5 font-['Lato',sans-serif] text-xs text-[#C94A4A]">
-              {permissionError}
-            </p>
-          )}
-        </div>
+        {/* Footer con el campo de texto reutilizando LloroInput idéntico al Inicio */}
+        <footer className="w-full px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-2 bg-[#0E131F]">
+          <LloroInput
+            value={draft}
+            onChange={setDraft}
+            onSubmit={handleSendMessage}
+            placeholder="¿Qué pasó hoy?"
+            isRecording={isRecording}
+            recordingTime={recordingTime}
+            onStartRecording={onVoiceRecord ? handleStartRecording : undefined}
+            onStopRecording={stopRecording}
+            onCancelRecording={cancelRecording}
+            permissionError={permissionError}
+          />
+        </footer>
       </div>
     </motion.div>
   )

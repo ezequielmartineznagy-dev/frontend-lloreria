@@ -9,6 +9,7 @@ export interface LloroInputProps {
   /** Se llama al terminar una grabación de voz con el audio resultante. */
   onVoiceRecord?: (audio: Blob) => void
   placeholder?: string
+  ariaLabel?: string
   className?: string
 
   // Props opcionales para control directo desde useAudioRecorder
@@ -29,6 +30,7 @@ export const LloroInput: React.FC<LloroInputProps> = ({
   onSubmit,
   onVoiceRecord,
   placeholder = '¿Qué pasó hoy?',
+  ariaLabel,
   className = '',
   isRecording: controlledIsRecording,
   recordingTime: controlledRecordingTime,
@@ -124,7 +126,7 @@ export const LloroInput: React.FC<LloroInputProps> = ({
               onChange={(e) => onChange(e.target.value)}
               placeholder={placeholder}
               className="w-full min-w-0 bg-transparent text-white placeholder-[#8E9CAE] focus:outline-none font-['Lato',sans-serif] text-base md:text-lg caret-[#4EA8DE]"
-              aria-label="Escribe tu desahogo"
+              aria-label={ariaLabel ?? placeholder ?? 'Escribe tu desahogo'}
             />
             {canRecord && (
               <button
