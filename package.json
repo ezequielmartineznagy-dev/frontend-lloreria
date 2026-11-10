@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@radix-ui/react-slider": "^1.6.1",
     "@radix-ui/react-switch": "^1.4.1",
     "@supabase/supabase-js": "^2.119.0",
@@ -38,4 +39,3 @@
     "vitest": "^5.1.0"
   }
 }
-

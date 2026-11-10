@@ -1,7 +1,16 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
+
+vi.mock('./services/ai', () => ({
+  generateDiagnosis: vi.fn().mockImplementation(async (text: string) => {
+    return `Diagnóstico para: ${text}`
+  }),
+  generateGotitaReply: vi.fn().mockImplementation(async (text: string) => {
+    return `Respuesta a: ${text}`
+  }),
+}))
 
 // El diagnóstico y transición tarda 1.5s
 const SLOW = { timeout: 3500 }

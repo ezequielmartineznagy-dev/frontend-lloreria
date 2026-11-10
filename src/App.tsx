@@ -5,7 +5,7 @@ import { DiagnosticModal } from './components/DiagnosticModal'
 import { LlorometroTopSheet } from './components/LlorometroTopSheet'
 import { ThinkingState } from './components/ThinkingState'
 import { getStoredDrops, saveDrop, type LloroItem } from './services/lloros'
-import { getRandomDiagnosis } from './utils/diagnosis'
+import { generateDiagnosis, generateGotitaReply } from './services/ai'
 import { ChatView, type ChatMessage } from './views/ChatView'
 import { HomeView } from './views/HomeView'
 import { LluviaFeedView } from './views/LluviaFeedView'
@@ -46,30 +46,36 @@ function App() {
   const pushMessage = (sender: ChatMessage['sender'], text: string) =>
     setMessages((prev) => [...prev, { id: String(nextId.current++), sender, text }])
 
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = async (text: string) => {
     pushMessage('user', text)
-    const reply = MOCK_REPLIES[replyIndex.current++ % MOCK_REPLIES.length]
-    timers.current.push(window.setTimeout(() => pushMessage('gotita', reply), 900))
+    try {
+      const reply = await generateGotitaReply(text, messages)
+      pushMessage('gotita', reply)
+    } catch {
+      const reply = MOCK_REPLIES[replyIndex.current++ % MOCK_REPLIES.length]
+      timers.current.push(window.setTimeout(() => pushMessage('gotita', reply), 600))
+    }
   }
 
-  // Home: al enviar un lloro, simula carga (1.5s) y pasa directo al Chat con el lloro y el veredicto
-  const handleSubmitDraft = (text: string) => {
+  // Home: al enviar un lloro, muestra ThinkingState mientras Gemini genera la respuesta y pasa al ChatView
+  const handleSubmitDraft = async (text: string) => {
     if (isThinking) return
     setCurrentDraftText(text)
     setIsThinking(true)
-    timers.current.push(
-      window.setTimeout(() => {
-        const diagnosis = getRandomDiagnosis()
-        setActiveDiagnosis(diagnosis)
-        setIsThinking(false)
-        nextId.current = 1
-        setMessages([
-          { id: String(nextId.current++), sender: 'user', text },
-          { id: String(nextId.current++), sender: 'gotita', text: diagnosis },
-        ])
-        setCurrentScreen('chat')
-      }, 1500),
-    )
+    try {
+      const diagnosis = await generateDiagnosis(text)
+      setActiveDiagnosis(diagnosis)
+      nextId.current = 1
+      setMessages([
+        { id: String(nextId.current++), sender: 'user', text },
+        { id: String(nextId.current++), sender: 'gotita', text: diagnosis },
+      ])
+      setCurrentScreen('chat')
+    } catch (error) {
+      console.error('[Gemini] Error en handleSubmitDraft:', error)
+    } finally {
+      setIsThinking(false)
+    }
   }
 
   // Diagnóstico → "Aceptar mi destino": conversación privada con Gotita
