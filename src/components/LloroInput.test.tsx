@@ -47,5 +47,38 @@ describe('LloroInput', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('no permite grabar')
     vi.unstubAllGlobals()
   })
-})
 
+  it('muestra la interfaz de grabación cuando isRecording es true', async () => {
+    const onCancel = vi.fn()
+    const onStop = vi.fn()
+    render(
+      <LloroInput
+        value=""
+        onChange={() => {}}
+        onSubmit={() => {}}
+        isRecording={true}
+        recordingTime={15}
+        onCancelRecording={onCancel}
+        onStopRecording={onStop}
+      />,
+    )
+
+    // El input de texto normal debe estar oculto
+    expect(screen.queryByPlaceholderText('¿Qué pasó hoy?')).not.toBeInTheDocument()
+
+    // Indicador y cronómetro formateado
+    expect(screen.getByRole('timer')).toHaveTextContent('00:15')
+
+    // Botones de cancelar y detener
+    const cancelBtn = screen.getByRole('button', { name: 'Cancelar grabación' })
+    const stopBtn = screen.getByRole('button', { name: 'Detener y enviar grabación' })
+    expect(cancelBtn).toBeInTheDocument()
+    expect(stopBtn).toBeInTheDocument()
+
+    await userEvent.click(cancelBtn)
+    expect(onCancel).toHaveBeenCalledTimes(1)
+
+    await userEvent.click(stopBtn)
+    expect(onStop).toHaveBeenCalledTimes(1)
+  })
+})

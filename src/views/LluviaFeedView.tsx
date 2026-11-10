@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowLeft } from 'lucide-react'
 import { GotaItem } from '../components/GotaItem'
 import { LluviaBackground } from '../components/LluviaBackground'
 import type { LloroItem } from '../services/lloros'
@@ -14,7 +13,6 @@ import {
 } from '../lib/lluvia'
 
 interface LluviaFeedViewProps {
-  onBack: () => void
   /** Historial de lloros. El más reciente va primero; al agregarse uno nuevo, cae de inmediato. */
   drops: LloroItem[]
 }
@@ -40,7 +38,7 @@ const shuffle = <T,>(items: T[]) => {
 
 type PoolItem = { text: string; level: number }
 
-export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, drops: history }) => {
+export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ drops: history }) => {
   const [drops, setDrops] = useState<(LloroDrop & { lane: number })[]>([])
   const [splashes, setSplashes] = useState<Splash[]>([])
   const [expandedId, setExpandedId] = useState<string | null>(null)
@@ -178,23 +176,14 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, drops: h
       transition={{ duration: 0.25, ease: 'easeOut' }}
       className="relative min-h-[100dvh] h-[100dvh] w-full overflow-hidden bg-[#0E131F] select-none"
     >
-      <div className="@container relative mx-auto h-full w-full max-w-md overflow-hidden">
+      <div className="@container relative mx-auto h-full w-full max-w-md overflow-hidden pb-20">
         <LluviaBackground />
 
-        <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between px-6 py-6 select-none">
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Volver"
-            className="pointer-events-auto mt-1 rounded-full text-[#8E9CAE] transition-all duration-150 active:scale-[0.96] hover:text-white cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
-          >
-            <ArrowLeft size={24} aria-hidden="true" />
-          </button>
+        <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-center px-6 py-6 select-none">
           <div className="text-center">
             <h1 className="font-['Quicksand',sans-serif] text-2xl font-bold text-white">Lloros y Lloros</h1>
             <p className="font-['Lato',sans-serif] text-sm text-[#8E9CAE]">Cuánta gente llorando</p>
           </div>
-          <span className="w-6" aria-hidden="true" />
         </header>
 
         {/* Degradado superior: las gotas emergen de la oscuridad sin tapar el título */}
@@ -219,7 +208,7 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ onBack, drops: h
           <div
             key={s.id}
             aria-hidden="true"
-            className="pointer-events-none absolute bottom-7"
+            className="pointer-events-none absolute bottom-20"
             style={{ left: s.left }}
           >
             <span

@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Mic, SendHorizontal, Square, X } from 'lucide-react'
+import React, { useEffect } from 'react'
+import { Mic, SendHorizontal, StopCircle, Trash2 } from 'lucide-react'
+import { useAudioRecorder } from '../hooks/useAudioRecorder'
 
-interface LloroInputProps {
+export interface LloroInputProps {
   value: string
   onChange: (value: string) => void
   onSubmit: () => void
@@ -9,9 +10,18 @@ interface LloroInputProps {
   onVoiceRecord?: (audio: Blob) => void
   placeholder?: string
   className?: string
+
+  // Props opcionales para control directo desde useAudioRecorder
+  isRecording?: boolean
+  recordingTime?: number
+  onStartRecording?: () => void
+  onStopRecording?: () => void
+  onCancelRecording?: () => void
+  permissionError?: string | null
 }
 
-const formatTime = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`
+const formatTime = (s: number) =>
+  `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
 
 export const LloroInput: React.FC<LloroInputProps> = ({
   value,
@@ -20,87 +30,38 @@ export const LloroInput: React.FC<LloroInputProps> = ({
   onVoiceRecord,
   placeholder = '¿Qué pasó hoy?',
   className = '',
+  isRecording: controlledIsRecording,
+  recordingTime: controlledRecordingTime,
+  onStartRecording: controlledStartRecording,
+  onStopRecording: controlledStopRecording,
+  onCancelRecording: controlledCancelRecording,
+  permissionError: controlledPermissionError,
 }) => {
-  const [isRecording, setIsRecording] = useState(false)
-  const [seconds, setSeconds] = useState(0)
-  const [error, setError] = useState<string | null>(null)
+  const internalRecorder = useAudioRecorder()
+  const isControlled = typeof controlledIsRecording === 'boolean'
 
-  const recorderRef = useRef<MediaRecorder | null>(null)
-  const streamRef = useRef<MediaStream | null>(null)
-  const chunksRef = useRef<Blob[]>([])
-  const timerRef = useRef<number | null>(null)
-  const discardRef = useRef(false)
+  const isRecording = isControlled ? controlledIsRecording : internalRecorder.isRecording
+  const recordingTime = isControlled ? (controlledRecordingTime ?? 0) : internalRecorder.recordingTime
+  const permissionError = isControlled ? controlledPermissionError : internalRecorder.permissionError
+  const startRecording = isControlled ? controlledStartRecording : internalRecorder.startRecording
+  const stopRecording = isControlled ? controlledStopRecording : internalRecorder.stopRecording
+  const cancelRecording = isControlled ? controlledCancelRecording : internalRecorder.cancelRecording
 
   const hasText = value.trim().length > 0
-  const canRecord = Boolean(onVoiceRecord)
+  const canRecord = Boolean(onVoiceRecord || controlledStartRecording)
 
-  const cleanup = useCallback(() => {
-    if (timerRef.current !== null) window.clearInterval(timerRef.current)
-    timerRef.current = null
-    streamRef.current?.getTracks().forEach((t) => t.stop())
-    streamRef.current = null
-    recorderRef.current = null
-    setIsRecording(false)
-    setSeconds(0)
-  }, [])
-
-  // Detiene y descarta cualquier grabación si el componente se desmonta.
+  // En modo no controlado, notificar al terminar grabación con el blob
   useEffect(() => {
-    return () => {
-      discardRef.current = true
-      if (recorderRef.current && recorderRef.current.state !== 'inactive') {
-        recorderRef.current.stop()
-      }
-      cleanup()
+    if (!isControlled && internalRecorder.audioBlob) {
+      onVoiceRecord?.(internalRecorder.audioBlob)
+      internalRecorder.resetAudio()
     }
-  }, [cleanup])
-
-  const startRecording = async () => {
-    setError(null)
-    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
-      setError('Tu navegador no permite grabar audio.')
-      return
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      const recorder = new MediaRecorder(stream)
-      chunksRef.current = []
-      discardRef.current = false
-
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data)
-      }
-      recorder.onstop = () => {
-        const shouldSend = !discardRef.current && chunksRef.current.length > 0
-        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || 'audio/webm' })
-        chunksRef.current = []
-        cleanup()
-        if (shouldSend) onVoiceRecord?.(blob)
-      }
-
-      streamRef.current = stream
-      recorderRef.current = recorder
-      recorder.start()
-      setIsRecording(true)
-      timerRef.current = window.setInterval(() => setSeconds((s) => s + 1), 1000)
-    } catch {
-      setError('No pudimos acceder al micrófono. Revisá los permisos.')
-    }
-  }
-
-  const stopRecording = (discard: boolean) => {
-    discardRef.current = discard
-    if (recorderRef.current && recorderRef.current.state !== 'inactive') {
-      recorderRef.current.stop()
-    } else {
-      cleanup()
-    }
-  }
+  }, [isControlled, internalRecorder.audioBlob, internalRecorder, onVoiceRecord])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (isRecording) {
-      stopRecording(false)
+      stopRecording?.()
       return
     }
     if (hasText) onSubmit()
@@ -113,38 +74,46 @@ export const LloroInput: React.FC<LloroInputProps> = ({
     <div className={`w-full ${className}`}>
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-center gap-2 w-full bg-[#161F33] rounded-full px-6 py-4 shadow-lg border border-transparent focus-within:border-[#4EA8DE]/30 transition-all duration-200"
+        className="relative flex items-center justify-between gap-2 w-full bg-[#161F33] rounded-full px-6 py-4 shadow-lg border border-transparent focus-within:border-[#4EA8DE]/30 transition-all duration-200"
         aria-label="Formulario para desahogarse"
       >
         {isRecording ? (
           <>
-            <span className="relative flex h-3 w-3 flex-shrink-0" aria-hidden="true">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4EA8DE] opacity-60" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-[#4EA8DE]" />
-            </span>
-            <p
-              className="flex-1 font-['Lato',sans-serif] text-base md:text-lg text-white"
-              role="timer"
-              aria-live="off"
-            >
-              Grabando… <span className="text-[#8E9CAE] tabular-nums">{formatTime(seconds)}</span>
-            </p>
+            {/* Botón cancelar a la izquierda */}
             <button
               type="button"
-              onClick={() => stopRecording(true)}
-              className={`${iconButton} p-1 text-[#8E9CAE] hover:text-white`}
+              onClick={cancelRecording}
+              className={`${iconButton} p-1 text-[#8E9CAE] hover:text-[#C94A4A] transition-colors`}
               aria-label="Cancelar grabación"
-              title="Cancelar"
+              title="Cancelar grabación"
             >
-              <X className="w-6 h-6 stroke-[1.75]" />
+              <Trash2 className="w-5 h-5" />
             </button>
+
+            {/* Indicador de grabación centrado */}
+            <div className="flex-1 flex items-center justify-center gap-2">
+              <span
+                className="w-2.5 h-2.5 bg-[#C94A4A] rounded-full animate-pulse"
+                aria-hidden="true"
+              />
+              <span
+                className="font-['Lato',sans-serif] font-bold text-[#C94A4A] text-base md:text-lg tabular-nums"
+                role="timer"
+                aria-live="off"
+              >
+                {formatTime(recordingTime)}
+              </span>
+            </div>
+
+            {/* Botón detener / enviar a la derecha */}
             <button
-              type="submit"
-              className={`${iconButton} -my-1 flex h-8 w-8 items-center justify-center bg-[#4EA8DE] text-[#0E131F] hover:brightness-110`}
+              type="button"
+              onClick={stopRecording}
+              className={`${iconButton} p-1 text-[#4EA8DE] hover:brightness-110`}
               aria-label="Detener y enviar grabación"
-              title="Enviar grabación"
+              title="Detener y enviar"
             >
-              <Square className="h-3.5 w-3.5 fill-current" />
+              <StopCircle className="w-6 h-6" />
             </button>
           </>
         ) : (
@@ -180,9 +149,9 @@ export const LloroInput: React.FC<LloroInputProps> = ({
           </>
         )}
       </form>
-      {error && (
-        <p role="alert" className="mt-2 px-6 font-['Lato',sans-serif] text-sm text-[#8E9CAE]">
-          {error}
+      {permissionError && (
+        <p role="alert" className="mt-2 px-6 font-['Lato',sans-serif] text-sm text-[#C94A4A]">
+          {permissionError}
         </p>
       )}
     </div>

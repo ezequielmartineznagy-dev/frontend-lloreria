@@ -1,60 +1,62 @@
-﻿import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 import App from './App'
-import { getStoredDrops } from './services/lloros'
 
-// El diagnóstico tarda 1.5–2 s simulando la red
+// El diagnóstico y transición tarda 1.5s
 const SLOW = { timeout: 3500 }
 
-describe('App: flujo principal', () => {
+describe('App: flujo principal con Bottom Navigation', () => {
   beforeEach(() => localStorage.clear())
 
   const sendFromHome = async (text: string) => {
     await userEvent.type(screen.getByPlaceholderText('¿Qué pasó hoy?'), `${text}{Enter}`)
   }
 
-  it('muestra el estado de carga antes del diagnóstico', async () => {
-    render(<App />)
-    await sendFromHome('algo')
-    expect(await screen.findByText('Analizando tu nivel de drama...')).toBeInTheDocument()
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(await screen.findByRole('dialog', {}, SLOW)).toBeInTheDocument()
-  })
-
-  it('enviar texto abre el diagnóstico y "Aceptar mi destino" lleva al chat', async () => {
+  it('muestra estado de carga y pasa directo a ChatView con el lloro y diagnóstico', async () => {
     render(<App />)
     await sendFromHome('Se me cortó la leche')
-    expect(await screen.findByRole('dialog', {}, SLOW)).toHaveAccessibleName('Diagnóstico')
+    expect(await screen.findByText('Analizando tu nivel de drama...')).toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('button', { name: 'Aceptar mi destino' }))
-    expect(await screen.findByText('La Gotita')).toBeInTheDocument()
+    // Llega directamente a ChatView sin pasar por el modal
+    expect(await screen.findByText('La Gotita', {}, SLOW)).toBeInTheDocument()
     expect(screen.getByText('Se me cortó la leche')).toBeInTheDocument()
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('"Compartir drama" abre el Llorómetro y soltar guarda el lloro', async () => {
+  it('permite navegar entre Inicio, Muro y Perfil mediante BottomNav', async () => {
     render(<App />)
-    await sendFromHome('Se me perdió el cargador')
-    await userEvent.click(await screen.findByRole('button', { name: 'Compartir drama' }, SLOW))
 
+    // En Inicio por defecto
+    expect(screen.getByRole('button', { name: 'Inicio' })).toHaveAttribute('aria-current', 'page')
+
+    // Ir a Muro
+    await userEvent.click(screen.getByRole('button', { name: 'Muro' }))
     expect(await screen.findByText('Lloros y Lloros')).toBeInTheDocument()
-    await userEvent.click(await screen.findByRole('button', { name: 'Soltar a la lluvia' }))
+    expect(screen.getByRole('button', { name: 'Muro' })).toHaveAttribute('aria-current', 'page')
 
-    const stored = getStoredDrops()
-    expect(stored[0].text).toBe('Se me perdió el cargador')
-    expect(stored[0].level).toBe(5)
-    await waitFor(() =>
-      expect(screen.queryByRole('button', { name: 'Soltar a la lluvia' })).not.toBeInTheDocument(),
-    )
+    // Ir a Perfil
+    await userEvent.click(screen.getByRole('button', { name: 'Perfil' }))
+    expect(await screen.findByText('Llorón Profesional')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Perfil' })).toHaveAttribute('aria-current', 'page')
+
+    // Regresar a Inicio
+    await userEvent.click(screen.getByRole('button', { name: 'Inicio' }))
+    expect(await screen.findByText('Desahogate')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Inicio' })).toHaveAttribute('aria-current', 'page')
   })
 
-  it('la flecha del Muro vuelve al Home', async () => {
+  it('oculta la barra de navegación en el Chat y permite volver al Home', async () => {
     render(<App />)
-    await sendFromHome('algo')
-    await userEvent.click(await screen.findByRole('button', { name: 'Compartir drama' }, SLOW))
-    await userEvent.click(await screen.findByRole('button', { name: 'Volver' }))
+    await sendFromHome('Algo dramático')
+
+    expect(await screen.findByText('La Gotita', {}, SLOW)).toBeInTheDocument()
+    // En chat la barra inferior no debe estar visible
+    expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
+
+    // Al tocar volver en el chat, regresa al home y la barra reaparece
+    await userEvent.click(screen.getByRole('button', { name: 'Volver' }))
     expect(await screen.findByText('Desahogate')).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Navegación principal' })).toBeInTheDocument()
   })
 })
-
-

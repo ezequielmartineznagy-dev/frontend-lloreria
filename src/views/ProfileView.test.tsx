@@ -1,11 +1,10 @@
-﻿import { render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { ProfileView } from './ProfileView'
 
 const setup = (isAlarmEnabled = true) => {
   const props = {
-    onBack: vi.fn(),
     username: 'Llorón Profesional',
     stats: { volumen: '3.8 L', dramaPromedio: '7.2', rachaActiva: '14 días' },
     onSaveUsername: vi.fn(),
@@ -53,11 +52,9 @@ describe('ProfileView', () => {
     expect(props.onSaveUsername).toHaveBeenCalledWith('Gotita Triste')
   })
 
-  it('dispara volver y borrar historial', async () => {
+  it('dispara borrar historial', async () => {
     const props = setup()
-    await userEvent.click(screen.getByRole('button', { name: 'Volver' }))
     await userEvent.click(screen.getByRole('button', { name: 'Borrar todo mi historial de penas' }))
-    expect(props.onBack).toHaveBeenCalledTimes(1)
     expect(props.onClearHistory).toHaveBeenCalledTimes(1)
   })
 })

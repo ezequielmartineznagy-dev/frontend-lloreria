@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import * as Switch from '@radix-ui/react-switch'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Pencil } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { EditProfileModal } from '../components/EditProfileModal'
 import { Gotita } from '../components/Gotita'
 
@@ -14,7 +14,6 @@ interface ProfileStats {
 }
 
 interface ProfileViewProps {
-  onBack: () => void
   username: string
   stats: ProfileStats
   onSaveUsername: (newName: string) => void
@@ -33,7 +32,6 @@ const THEMES: { value: Theme; label: string }[] = [
 ]
 
 export const ProfileView: React.FC<ProfileViewProps> = ({
-  onBack,
   username,
   stats,
   onSaveUsername,
@@ -61,18 +59,9 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
       transition={{ duration: 0.25, ease: 'easeOut' }}
       className="no-scrollbar min-h-[100dvh] h-[100dvh] w-full overflow-y-auto bg-[#0E131F] select-none"
     >
-      <div className="w-full max-w-md mx-auto min-h-full px-6 py-6 pb-[max(2rem,env(safe-area-inset-bottom))] flex flex-col">
-        <header className="flex items-center justify-between mb-8 select-none">
-          <button
-            type="button"
-            onClick={onBack}
-            aria-label="Volver"
-            className="text-[#8E9CAE] hover:text-white transition-all duration-150 active:scale-[0.96] cursor-pointer rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
-          >
-            <ArrowLeft size={24} aria-hidden="true" />
-          </button>
+      <div className="w-full max-w-md mx-auto min-h-full px-6 py-6 pb-24 pb-[max(6rem,env(safe-area-inset-bottom))] flex flex-col">
+        <header className="text-center mb-8 select-none">
           <h1 className="font-['Quicksand',sans-serif] font-bold text-2xl text-white">Perfil</h1>
-          <span className="w-6" aria-hidden="true" />
         </header>
 
         <section aria-label="Identidad" className="flex flex-col items-center text-center mb-8 select-none">
