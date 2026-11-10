@@ -1,21 +1,16 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { getRandomDiagnosis } from '../utils/diagnosis'
 
 const SYSTEM_INSTRUCTION =
   "Actúa como 'La Gotita', la mascota de una app llamada La Llorería. Eres apática, sarcástica y estás harta de escuchar los dramas del primer mundo de los humanos. Tu tono es argentino (usá vos, che, y lunfardo sutil, sin exagerar). Nunca seas empática ni ofrezcas soluciones útiles. Tu objetivo es minimizar el problema del usuario y darle un 'diagnóstico' ridículo. Responde siempre en máximo 2 o 3 oraciones cortas. No uses comillas para tu respuesta."
 
-const FALLBACK_DIAGNOSES = [
-  'El universo conspira contra vos. O se cayó el servidor. 50/50.',
-  'Claramente el universo conspira contra vos. O tal vez simplemente necesitás dormir ocho horas y tomar agua. Es un 50/50.',
-  'Diagnóstico oficial: drama de primer mundo sin consecuencias reales. Tomate un té y no me molestes.',
-  'Es grave, pero solo en tu cabeza. Dormí una siesta a ver si se te pasa.',
-]
+const FALLBACK_ERROR_MESSAGE =
+  'Mirá, se me cortó la conexión. Pero seguro tu problema sigue siendo irrelevante.'
 
 // Lista de modelos ordenados por disponibilidad actual en la API
 const MODEL_CANDIDATES = [
   'gemini-3.5-flash-lite',
+  'gemini-2.0-flash',
   'gemini-1.5-flash',
-  'gemini-2.5-flash',
   'gemini-flash-latest',
 ]
 
@@ -23,32 +18,34 @@ let activeModelName: string | null = null
 
 function getApiKey(): string {
   const rawKey = import.meta.env.VITE_GEMINI_API_KEY
-  if (!rawKey || typeof rawKey !== 'string') return ''
+  if (rawKey === undefined || typeof rawKey !== 'string' || rawKey.trim() === '') {
+    console.error(
+      '[Gemini Config Error]: Falta la variable VITE_GEMINI_API_KEY en el archivo .env o el servidor Vite necesita reiniciarse.',
+    )
+    return ''
+  }
   return rawKey.trim().replace(/^["']|["']$/g, '')
 }
 
-function getFallbackDiagnosis(): string {
-  try {
-    const d = getRandomDiagnosis()
-    if (d) return d
-  } catch {
-    // ignorar y usar la lista local
-  }
-  return FALLBACK_DIAGNOSES[Math.floor(Math.random() * FALLBACK_DIAGNOSES.length)]
+// Validación temprana al cargar el módulo
+if (
+  import.meta.env.VITE_GEMINI_API_KEY === undefined ||
+  String(import.meta.env.VITE_GEMINI_API_KEY).trim() === ''
+) {
+  console.error(
+    '[Gemini Config Error]: Falta la variable VITE_GEMINI_API_KEY en el archivo .env o el servidor Vite necesita reiniciarse.',
+  )
 }
 
 /**
  * Genera un diagnóstico ácido y personalizado utilizando la API de Google Gemini.
- * En caso de error, falta de API Key o fallo de red, retorna un diagnóstico de respaldo.
+ * En caso de error, falta de API Key o fallo de red, expone el error en consola y retorna el mensaje de fallback.
  */
 export async function generateDiagnosis(userLloro: string): Promise<string> {
   const apiKey = getApiKey()
 
   if (!apiKey) {
-    console.warn(
-      '[Gemini] VITE_GEMINI_API_KEY no encontrada en import.meta.env. Verifica que tu archivo .env tenga la variable y reinicia el servidor de desarrollo (npm run dev).'
-    )
-    return getFallbackDiagnosis()
+    return FALLBACK_ERROR_MESSAGE
   }
 
   const genAI = new GoogleGenerativeAI(apiKey)
@@ -57,6 +54,8 @@ export async function generateDiagnosis(userLloro: string): Promise<string> {
   const modelsToTry = activeModelName
     ? [activeModelName, ...MODEL_CANDIDATES.filter((m) => m !== activeModelName)]
     : MODEL_CANDIDATES
+
+  let lastError: unknown = null
 
   for (const modelName of modelsToTry) {
     try {
@@ -72,13 +71,14 @@ export async function generateDiagnosis(userLloro: string): Promise<string> {
         activeModelName = modelName
         return text.replace(/^["'«“]+|["'»”]+$/g, '').trim()
       }
-    } catch (error: unknown) {
-      console.warn(`[Gemini] No se pudo generar con ${modelName}, evaluando alternativas...`, error)
+    } catch (error) {
+      lastError = error
+      console.error(`[Gemini API Error Detallado] (${modelName}):`, error)
     }
   }
 
-  console.error('[Gemini] Todos los modelos de Gemini fallaron. Usando diagnóstico de respaldo.')
-  return getFallbackDiagnosis()
+  console.error('[Gemini API Error Detallado]:', lastError)
+  return FALLBACK_ERROR_MESSAGE
 }
 
 /**
@@ -91,10 +91,7 @@ export async function generateGotitaReply(
   const apiKey = getApiKey()
 
   if (!apiKey) {
-    console.warn(
-      '[Gemini] VITE_GEMINI_API_KEY no encontrada en import.meta.env. Verifica tu archivo .env y reinicia el servidor Vite.'
-    )
-    return 'Mirá, se me cortó la conexión. Pero seguro tu problema sigue siendo irrelevante.'
+    return FALLBACK_ERROR_MESSAGE
   }
 
   const genAI = new GoogleGenerativeAI(apiKey)
@@ -111,6 +108,8 @@ export async function generateGotitaReply(
     ? [activeModelName, ...MODEL_CANDIDATES.filter((m) => m !== activeModelName)]
     : MODEL_CANDIDATES
 
+  let lastError: unknown = null
+
   for (const modelName of modelsToTry) {
     try {
       const model = genAI.getGenerativeModel({
@@ -124,10 +123,12 @@ export async function generateGotitaReply(
         activeModelName = modelName
         return text.replace(/^["'«“]+|["'»”]+$/g, '').trim()
       }
-    } catch (error: unknown) {
-      console.warn(`[Gemini] Falló respuesta de chat con ${modelName}:`, error)
+    } catch (error) {
+      lastError = error
+      console.error(`[Gemini API Error Detallado] (${modelName}):`, error)
     }
   }
 
-  return 'Seguí hablando que casi me importa. De hecho, no.'
+  console.error('[Gemini API Error Detallado]:', lastError)
+  return FALLBACK_ERROR_MESSAGE
 }
