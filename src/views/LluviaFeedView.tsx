@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
 import { GotaItem } from '../components/GotaItem'
 import { LluviaBackground } from '../components/LluviaBackground'
 import type { LloroItem } from '../services/lloros'
@@ -168,15 +167,11 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ drops: history }
   }, [])
 
   return (
-    <motion.div
+    <div
       role="main"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
       className="relative min-h-[100dvh] h-[100dvh] w-full overflow-hidden bg-[#0E131F] select-none"
     >
-      <div className="@container relative mx-auto h-full w-full max-w-md overflow-hidden pb-20">
+      <div className="@container relative mx-auto h-full w-full max-w-md overflow-hidden">
         <LluviaBackground />
 
         <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-center px-6 py-6 select-none">
@@ -244,7 +239,7 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ drops: history }
           ))}
         </ul>
       </div>
-    </motion.div>
+    </div>
   )
 }
 

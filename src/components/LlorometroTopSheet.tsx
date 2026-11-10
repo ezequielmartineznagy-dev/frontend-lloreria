@@ -111,6 +111,7 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
                 if (info.offset.y < -70 || info.velocity.y < -500) onClose()
               }}
               onClick={(e) => e.stopPropagation()}
+              onPointerDownCapture={(e) => e.stopPropagation()}
             >
               <h2
                 id={titleId}
@@ -145,6 +146,7 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
                 step={1}
                 value={[level]}
                 onValueChange={([v]) => setLevel(v)}
+                onPointerDownCapture={(e) => e.stopPropagation()}
               >
                 <Slider.Track className="relative h-1.5 grow overflow-hidden rounded-full bg-[#0E131F]">
                   <Slider.Range className="absolute h-full rounded-full bg-[#4EA8DE]" />

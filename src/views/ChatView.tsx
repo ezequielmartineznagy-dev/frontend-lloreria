@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
 import { Gotita } from '../components/Gotita'
 import { LloroInput } from '../components/LloroInput'
@@ -71,17 +70,13 @@ export const ChatView: React.FC<ChatViewProps> = ({
   }
 
   return (
-    <motion.div
+    <div
       role="main"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="min-h-[100dvh] h-[100dvh] w-full bg-[#0E131F] select-none"
+      className="relative h-full w-full min-h-[100dvh] bg-[#0E131F] select-none overflow-hidden"
     >
       <div className="w-full max-w-md mx-auto h-full flex flex-col justify-between">
         {/* Top bar */}
-        <header className="flex items-center justify-between py-4 px-6 border-b border-[#161F33] select-none">
+        <header className="flex items-center justify-between py-4 px-6 border-b border-[#161F33] select-none pt-[max(1rem,env(safe-area-inset-top))]">
           <button
             type="button"
             onClick={onBack}
@@ -103,8 +98,12 @@ export const ChatView: React.FC<ChatViewProps> = ({
           <span className="w-6" aria-hidden="true" />
         </header>
 
-        {/* Mensajes */}
-        <div ref={scrollRef} className="no-scrollbar flex-1 overflow-y-auto px-6 py-6">
+        {/* Mensajes con scroll vertical y bloqueo de propagación para no arrastrar la pantalla */}
+        <div
+          ref={scrollRef}
+          onPointerDownCapture={(e) => e.stopPropagation()}
+          className="no-scrollbar flex-1 overflow-y-auto px-6 pt-4 pb-28"
+        >
           <ul className="space-y-4" aria-live="polite" aria-label="Conversación con La Gotita">
             {messages.map((m, i) => {
               const startsRun = messages[i - 1]?.sender !== m.sender
@@ -142,8 +141,11 @@ export const ChatView: React.FC<ChatViewProps> = ({
           </ul>
         </div>
 
-        {/* Footer con el campo de texto reutilizando LloroInput idéntico al Inicio */}
-        <footer className="w-full px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-2 bg-[#0E131F]">
+        {/* Footer con el campo de texto anclado al fondo absoluto */}
+        <footer
+          className="absolute bottom-0 inset-x-0 w-full max-w-md mx-auto px-6 pb-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-[#0E131F] via-[#0E131F] to-transparent z-20"
+          onPointerDownCapture={(e) => e.stopPropagation()}
+        >
           <LloroInput
             value={draft}
             onChange={setDraft}
@@ -158,7 +160,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
           />
         </footer>
       </div>
-    </motion.div>
+    </div>
   )
 }
 

@@ -57,6 +57,7 @@ export const GotaItem: React.FC<GotaItemProps> = ({ drop, expanded, onTap, onEnd
       }`}
       style={style}
       onClick={() => onTap(drop.id)}
+      onPointerDownCapture={(e) => e.stopPropagation()}
       onAnimationEnd={(e) => {
         if (e.target === e.currentTarget) onEnd(drop)
       }}

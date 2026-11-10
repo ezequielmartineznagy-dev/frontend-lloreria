@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import * as Switch from '@radix-ui/react-switch'
-import { motion } from 'framer-motion'
 import { Pencil } from 'lucide-react'
 import { EditProfileModal } from '../components/EditProfileModal'
 import { Gotita } from '../components/Gotita'
@@ -51,16 +50,12 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
   ]
 
   return (
-    <motion.div
+    <div
       role="main"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
       className="no-scrollbar min-h-[100dvh] h-[100dvh] w-full overflow-y-auto bg-[#0E131F] select-none"
     >
-      <div className="w-full max-w-md mx-auto min-h-full px-6 py-6 pb-24 pb-[max(6rem,env(safe-area-inset-bottom))] flex flex-col">
-        <header className="text-center mb-8 select-none">
+      <div className="w-full max-w-md mx-auto min-h-full px-6 py-6 pb-12 pb-[max(3rem,env(safe-area-inset-bottom))] pt-[max(2.5rem,env(safe-area-inset-top))] flex flex-col">
+        <header className="text-center mb-6 select-none">
           <h1 className="font-['Quicksand',sans-serif] font-bold text-2xl text-white">Perfil</h1>
         </header>
 
@@ -74,6 +69,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           <button
             type="button"
             onClick={() => setIsEditProfileOpen(true)}
+            onPointerDownCapture={(e) => e.stopPropagation()}
             className="mt-3 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#161F33] border border-[#8E9CAE]/20 text-xs font-['Lato',sans-serif] text-[#8E9CAE] hover:text-white transition-all duration-150 active:scale-[0.96] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
           >
             <Pencil size={11} aria-hidden="true" />
@@ -97,7 +93,11 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           ))}
         </section>
 
-        <section aria-labelledby="ajustes-title" className="flex flex-col select-none">
+        <section
+          aria-labelledby="ajustes-title"
+          className="flex flex-col select-none"
+          onPointerDownCapture={(e) => e.stopPropagation()}
+        >
           <h2
             id="ajustes-title"
             className="font-['Quicksand',sans-serif] font-bold text-lg text-white mb-3 self-start"
@@ -163,6 +163,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           <button
             type="button"
             onClick={onClearHistory}
+            onPointerDownCapture={(e) => e.stopPropagation()}
             className="font-['Lato',sans-serif] text-xs text-red-400/80 hover:text-red-400 transition-all duration-150 active:scale-[0.96] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400/60 rounded"
           >
             Borrar todo mi historial de penas
@@ -179,7 +180,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
           setIsEditProfileOpen(false)
         }}
       />
-    </motion.div>
+    </div>
   )
 }
 

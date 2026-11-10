@@ -38,15 +38,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onSubmitDraft }) => {
   }
 
   return (
-    <motion.div
+    <div
       role="main"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      className="min-h-[100dvh] w-full bg-[#0E131F] flex flex-col justify-between selection:bg-[#4EA8DE]/30 selection:text-white select-none"
+      className="relative h-full w-full min-h-[100dvh] bg-[#0E131F] flex flex-col justify-between selection:bg-[#4EA8DE]/30 selection:text-white select-none overflow-hidden"
     >
-      <div className="w-full max-w-md mx-auto min-h-[100dvh] flex flex-col justify-between py-12 px-6 pb-24 pb-[max(6rem,env(safe-area-inset-bottom))]">
+      <div className="w-full max-w-md mx-auto h-full min-h-[100dvh] flex flex-col justify-between pt-12 pb-28 px-6">
         {/* Header de la aplicación */}
         <header className="text-center pt-2 select-none">
           <h1 className="font-['Quicksand',sans-serif] font-bold text-3xl sm:text-4xl text-white tracking-wide">
@@ -67,24 +63,27 @@ export const HomeView: React.FC<HomeViewProps> = ({ onSubmitDraft }) => {
             <Gotita size={210} />
           </motion.div>
         </section>
-
-        {/* Footer con el campo de texto / acción */}
-        <footer className="w-full pt-2">
-          <LloroInput
-            value={inputText}
-            onChange={setInputText}
-            onSubmit={handleSendMessage}
-            placeholder="¿Qué pasó hoy?"
-            isRecording={isRecording}
-            recordingTime={recordingTime}
-            onStartRecording={startRecording}
-            onStopRecording={stopRecording}
-            onCancelRecording={cancelRecording}
-            permissionError={permissionError}
-          />
-        </footer>
       </div>
-    </motion.div>
+
+      {/* Footer con el campo de texto / acción anclado al fondo absoluto */}
+      <footer
+        className="absolute bottom-0 inset-x-0 w-full max-w-md mx-auto px-6 pb-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] z-20"
+        onPointerDownCapture={(e) => e.stopPropagation()}
+      >
+        <LloroInput
+          value={inputText}
+          onChange={setInputText}
+          onSubmit={handleSendMessage}
+          placeholder="¿Qué pasó hoy?"
+          isRecording={isRecording}
+          recordingTime={recordingTime}
+          onStartRecording={startRecording}
+          onStopRecording={stopRecording}
+          onCancelRecording={cancelRecording}
+          permissionError={permissionError}
+        />
+      </footer>
+    </div>
   )
 }
 

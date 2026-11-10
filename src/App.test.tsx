@@ -15,7 +15,7 @@ vi.mock('./services/ai', () => ({
 // El diagnóstico y transición tarda 1.5s
 const SLOW = { timeout: 3500 }
 
-describe('App: flujo principal con Bottom Navigation', () => {
+describe('App: navegación por gestos y paginación horizontal', () => {
   beforeEach(() => localStorage.clear())
 
   const sendFromHome = async (text: string) => {
@@ -33,39 +33,39 @@ describe('App: flujo principal con Bottom Navigation', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('permite navegar entre Inicio, Muro y Perfil mediante BottomNav', async () => {
+  it('permite navegar entre Inicio, Muro y Perfil mediante el indicador de paginación (dots)', async () => {
     render(<App />)
 
-    // En Inicio por defecto
-    expect(screen.getByRole('button', { name: 'Inicio' })).toHaveAttribute('aria-current', 'page')
+    // En Inicio por defecto (dot central activo)
+    expect(screen.getByRole('button', { name: 'Ir a Inicio' })).toHaveAttribute('aria-current', 'page')
 
-    // Ir a Muro
-    await userEvent.click(screen.getByRole('button', { name: 'Muro' }))
+    // Ir a Muro (izquierda)
+    await userEvent.click(screen.getByRole('button', { name: 'Ir a Muro' }))
     expect(await screen.findByText('Lloros y Lloros')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Muro' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('button', { name: 'Ir a Muro' })).toHaveAttribute('aria-current', 'page')
 
-    // Ir a Perfil
-    await userEvent.click(screen.getByRole('button', { name: 'Perfil' }))
+    // Ir a Perfil (derecha)
+    await userEvent.click(screen.getByRole('button', { name: 'Ir a Perfil' }))
     expect(await screen.findByText('Llorón Profesional')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Perfil' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('button', { name: 'Ir a Perfil' })).toHaveAttribute('aria-current', 'page')
 
     // Regresar a Inicio
-    await userEvent.click(screen.getByRole('button', { name: 'Inicio' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Ir a Inicio' }))
     expect(await screen.findByText('Desahogate')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Inicio' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('button', { name: 'Ir a Inicio' })).toHaveAttribute('aria-current', 'page')
   })
 
-  it('oculta la barra de navegación en el Chat y permite volver al Home', async () => {
+  it('no contiene BottomNav y permite volver del Chat al Home', async () => {
     render(<App />)
-    await sendFromHome('Algo dramático')
 
-    expect(await screen.findByText('La Gotita', {}, SLOW)).toBeInTheDocument()
-    // En chat la barra inferior no debe estar visible
+    // BottomNav eliminada por completo
     expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
 
-    // Al tocar volver en el chat, regresa al home y la barra reaparece
+    await sendFromHome('Algo dramático')
+    expect(await screen.findByText('La Gotita', {}, SLOW)).toBeInTheDocument()
+
+    // Al tocar volver en el chat, regresa al home
     await userEvent.click(screen.getByRole('button', { name: 'Volver' }))
     expect(await screen.findByText('Desahogate')).toBeInTheDocument()
-    expect(screen.getByRole('navigation', { name: 'Navegación principal' })).toBeInTheDocument()
   })
 })
