@@ -11,9 +11,21 @@ const FALLBACK_DIAGNOSES = [
   'Es grave, pero solo en tu cabeza. Dormí una siesta a ver si se te pasa.',
 ]
 
-// Lista de modelos ordenados por compatibilidad. Se recuerda el primero que responda exitosamente.
-const MODEL_CANDIDATES = ['gemini-1.5-flash', 'gemini-3.5-flash-lite', 'gemini-2.5-flash']
+// Lista de modelos ordenados por disponibilidad actual en la API
+const MODEL_CANDIDATES = [
+  'gemini-3.5-flash-lite',
+  'gemini-1.5-flash',
+  'gemini-2.5-flash',
+  'gemini-flash-latest',
+]
+
 let activeModelName: string | null = null
+
+function getApiKey(): string {
+  const rawKey = import.meta.env.VITE_GEMINI_API_KEY
+  if (!rawKey || typeof rawKey !== 'string') return ''
+  return rawKey.trim().replace(/^["']|["']$/g, '')
+}
 
 function getFallbackDiagnosis(): string {
   try {
@@ -30,14 +42,16 @@ function getFallbackDiagnosis(): string {
  * En caso de error, falta de API Key o fallo de red, retorna un diagnóstico de respaldo.
  */
 export async function generateDiagnosis(userLloro: string): Promise<string> {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY
+  const apiKey = getApiKey()
 
-  if (!apiKey || typeof apiKey !== 'string' || apiKey.trim() === '') {
-    console.warn('[Gemini] VITE_GEMINI_API_KEY no encontrada. Usando diagnóstico de respaldo.')
+  if (!apiKey) {
+    console.warn(
+      '[Gemini] VITE_GEMINI_API_KEY no encontrada en import.meta.env. Verifica que tu archivo .env tenga la variable y reinicia el servidor de desarrollo (npm run dev).'
+    )
     return getFallbackDiagnosis()
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey.trim())
+  const genAI = new GoogleGenerativeAI(apiKey)
   const prompt = `Este es el desahogo del usuario:\n"${userLloro}"\n\nDame tu diagnóstico apático y sarcástico:`
 
   const modelsToTry = activeModelName
@@ -59,10 +73,11 @@ export async function generateDiagnosis(userLloro: string): Promise<string> {
         return text.replace(/^["'«“]+|["'»”]+$/g, '').trim()
       }
     } catch (error: unknown) {
-      console.warn(`[Gemini] Falló con ${modelName}, evaluando siguiente opción...`, error)
+      console.warn(`[Gemini] No se pudo generar con ${modelName}, evaluando alternativas...`, error)
     }
   }
 
+  console.error('[Gemini] Todos los modelos de Gemini fallaron. Usando diagnóstico de respaldo.')
   return getFallbackDiagnosis()
 }
 
@@ -73,13 +88,16 @@ export async function generateGotitaReply(
   userMessage: string,
   history: Array<{ sender: 'user' | 'gotita'; text: string }> = [],
 ): Promise<string> {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY
+  const apiKey = getApiKey()
 
-  if (!apiKey || typeof apiKey !== 'string' || apiKey.trim() === '') {
+  if (!apiKey) {
+    console.warn(
+      '[Gemini] VITE_GEMINI_API_KEY no encontrada en import.meta.env. Verifica tu archivo .env y reinicia el servidor Vite.'
+    )
     return 'Mirá, se me cortó la conexión. Pero seguro tu problema sigue siendo irrelevante.'
   }
 
-  const genAI = new GoogleGenerativeAI(apiKey.trim())
+  const genAI = new GoogleGenerativeAI(apiKey)
   const formattedHistory = history
     .slice(-6)
     .map((h) => `${h.sender === 'user' ? 'Usuario' : 'Gotita'}: ${h.text}`)
