@@ -4,11 +4,13 @@ import { describe, expect, it, vi } from 'vitest'
 import { BottomNav } from './BottomNav'
 
 describe('BottomNav', () => {
-  it('renderiza las 3 opciones de navegación', () => {
+  it('renderiza las 3 opciones de navegación en el orden solicitado (Muro, Inicio, Perfil)', () => {
     render(<BottomNav currentScreen="home" onNavigate={() => {}} />)
-    expect(screen.getByRole('button', { name: 'Inicio' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Muro' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Perfil' })).toBeInTheDocument()
+    const buttons = screen.getAllByRole('button')
+    expect(buttons).toHaveLength(3)
+    expect(buttons[0]).toHaveAccessibleName('Muro')
+    expect(buttons[1]).toHaveAccessibleName('Inicio')
+    expect(buttons[2]).toHaveAccessibleName('Perfil')
   })
 
   it('destaca el ítem activo según currentScreen', () => {
@@ -35,4 +37,3 @@ describe('BottomNav', () => {
     expect(onNavigate).toHaveBeenCalledWith('home')
   })
 })
-
