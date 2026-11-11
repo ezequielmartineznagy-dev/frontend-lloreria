@@ -113,8 +113,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   <li key={m.id} className="flex items-start gap-2.5 max-w-[85%]">
                     <Gotita size={26} className="flex-shrink-0 mt-1" />
                     <p
-                      className={`selectable bg-white dark:bg-[#161F33] border border-slate-200/80 dark:border-transparent rounded-2xl ${startsRun ? 'rounded-tl-none' : ''
-                        } p-4 text-slate-900 dark:text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] shadow-sm dark:shadow-none select-text`}
+                      className={`selectable bg-white dark:bg-[#161F33] border border-slate-200/80 dark:border-transparent rounded-2xl ${
+                        startsRun ? 'rounded-tl-none' : ''
+                      } p-4 text-slate-900 dark:text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] shadow-sm dark:shadow-none select-text`}
                     >
                       {m.text}
                     </p>
@@ -125,8 +126,9 @@ export const ChatView: React.FC<ChatViewProps> = ({
               return (
                 <li key={m.id} className="flex flex-col items-end max-w-[85%] ml-auto">
                   <p
-                    className={`selectable bg-slate-200 dark:bg-[#20293A] rounded-2xl ${startsRun ? 'rounded-tr-none' : ''
-                      } p-4 text-slate-900 dark:text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] select-text`}
+                    className={`selectable bg-slate-200 dark:bg-[#20293A] rounded-2xl ${
+                      startsRun ? 'rounded-tr-none' : ''
+                    } p-4 text-slate-900 dark:text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] select-text`}
                   >
                     {m.text}
                   </p>
