@@ -1,4 +1,4 @@
-﻿import React from 'react'
+import React from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Gotita } from './Gotita'
 
@@ -21,7 +21,7 @@ export const ThinkingState: React.FC<ThinkingStateProps> = ({
         aria-live="polite"
         className={
           overlay
-            ? 'fixed inset-0 z-40 flex flex-col items-center justify-center gap-4 bg-[#0E131F]/70 backdrop-blur-md'
+            ? 'fixed inset-0 z-40 flex flex-col items-center justify-center gap-4 bg-slate-900/60 dark:bg-[#0E131F]/70 backdrop-blur-md'
             : 'flex flex-col items-center justify-center gap-4'
         }
         initial={{ opacity: 0 }}
@@ -35,7 +35,7 @@ export const ThinkingState: React.FC<ThinkingStateProps> = ({
         >
           <Gotita size={80} />
         </motion.div>
-        <p className="animate-pulse text-center font-['Lato',sans-serif] text-sm text-[#8E9CAE]">
+        <p className="animate-pulse text-center font-['Lato',sans-serif] text-sm text-slate-600 dark:text-[#8E9CAE]">
           {message}
         </p>
       </motion.div>

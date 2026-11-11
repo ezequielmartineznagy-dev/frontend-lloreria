@@ -5,14 +5,13 @@ import { LlorometroTopSheet } from './components/LlorometroTopSheet'
 import { ThinkingState } from './components/ThinkingState'
 import { getStoredDrops, saveDrop, type LloroItem } from './services/lloros'
 import { generateDiagnosis, generateGotitaReply } from './services/ai'
+import { useTheme } from './hooks/useTheme'
 import { ChatView, type ChatMessage } from './views/ChatView'
 import { HomeView } from './views/HomeView'
 import { LluviaFeedView } from './views/LluviaFeedView'
 import { ProfileView } from './views/ProfileView'
 
 export type Screen = 'feed' | 'home' | 'chat' | 'profile'
-
-type Theme = 'claro' | 'oscuro' | 'automatico'
 
 // Orden espacial horizontal: Muro (izq = 0) -> Inicio / Chat (centro = 1) -> Perfil (der = 2)
 const SCREEN_ORDER: Record<Screen, number> = {
@@ -76,7 +75,7 @@ export function App() {
 
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [username, setUsername] = useState('Llorón Profesional')
-  const [theme, setTheme] = useState<Theme>('oscuro')
+  const { theme, setTheme } = useTheme()
   const [alarmEnabled, setAlarmEnabled] = useState(true)
 
   const nextId = useRef(1)
@@ -195,28 +194,30 @@ export function App() {
   }
 
   return (
-    <div className="max-w-md mx-auto min-h-[100dvh] h-[100dvh] bg-[#0E131F] relative overflow-hidden font-['Lato'] select-none">
-      {/* Indicador Visual de Paginación superior (Dots) */}
-      <nav
-        aria-label="Paginación horizontal"
-        className="fixed top-4 top-[max(1rem,env(safe-area-inset-top))] left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 pointer-events-auto"
-      >
-        {DOTS.map((dot, idx) => {
-          const isActive = getActiveDotIndex(currentScreen) === idx
-          return (
-            <button
-              key={dot.key}
-              type="button"
-              onClick={() => navigateTo(dot.key)}
-              aria-label={`Ir a ${dot.label}`}
-              aria-current={isActive ? 'page' : undefined}
-              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4EA8DE] ${
-                isActive ? 'w-3 bg-[#4EA8DE]' : 'w-1.5 bg-[#8E9CAE]/40 hover:bg-[#8E9CAE]/70'
-              }`}
-            />
-          )
-        })}
-      </nav>
+    <div className="max-w-md mx-auto min-h-[100dvh] h-[100dvh] bg-slate-50 dark:bg-[#0E131F] text-slate-900 dark:text-white relative overflow-hidden font-['Lato'] select-none transition-colors duration-200">
+      {/* Indicador Visual de Paginación superior (Dots) - solo visible en vistas con navegación horizontal */}
+      {currentScreen !== 'chat' && (
+        <nav
+          aria-label="Paginación horizontal"
+          className="fixed top-4 top-[max(1rem,env(safe-area-inset-top))] left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 pointer-events-auto"
+        >
+          {DOTS.map((dot, idx) => {
+            const isActive = getActiveDotIndex(currentScreen) === idx
+            return (
+              <button
+                key={dot.key}
+                type="button"
+                onClick={() => navigateTo(dot.key)}
+                aria-label={`Ir a ${dot.label}`}
+                aria-current={isActive ? 'page' : undefined}
+                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-[#4EA8DE] ${
+                  isActive ? 'w-3 bg-[#4EA8DE]' : 'w-1.5 bg-slate-400/40 dark:bg-[#8E9CAE]/40 hover:bg-slate-500 dark:hover:bg-[#8E9CAE]/70'
+                }`}
+              />
+            )
+          })}
+        </nav>
+      )}
 
       {/* Orquestador de Gestos y Animaciones de Transición */}
       <AnimatePresence initial={false} custom={direction}>

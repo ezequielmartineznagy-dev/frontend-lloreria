@@ -169,22 +169,22 @@ export const LluviaFeedView: React.FC<LluviaFeedViewProps> = ({ drops: history }
   return (
     <div
       role="main"
-      className="relative min-h-[100dvh] h-[100dvh] w-full overflow-hidden bg-[#0E131F] select-none"
+      className="relative min-h-[100dvh] h-[100dvh] w-full overflow-hidden bg-slate-50 dark:bg-[#0E131F] text-slate-900 dark:text-white select-none transition-colors duration-200"
     >
       <div className="@container relative mx-auto h-full w-full max-w-md overflow-hidden">
         <LluviaBackground />
 
-        <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-center px-6 py-6 select-none">
+        <header className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-center px-6 pt-12 pb-6 select-none">
           <div className="text-center">
-            <h1 className="font-['Quicksand',sans-serif] text-2xl font-bold text-white">Lloros y Lloros</h1>
-            <p className="font-['Lato',sans-serif] text-sm text-[#8E9CAE]">Cuánta gente llorando</p>
+            <h1 className="font-['Quicksand',sans-serif] text-2xl font-bold text-slate-900 dark:text-white">Lloros y Lloros</h1>
+            <p className="font-['Lato',sans-serif] text-sm text-slate-500 dark:text-[#8E9CAE]">Cuánta gente llorando</p>
           </div>
         </header>
 
         {/* Degradado superior: las gotas emergen de la oscuridad sin tapar el título */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-32 bg-gradient-to-b from-[#0E131F] via-[#0E131F]/70 to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-32 bg-gradient-to-b from-slate-50 via-slate-50/70 to-transparent dark:from-[#0E131F] dark:via-[#0E131F]/70 dark:to-transparent"
         />
 
         <div className="absolute inset-0">

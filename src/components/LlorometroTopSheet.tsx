@@ -84,7 +84,7 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 bg-[#0E131F]/70 backdrop-blur-md"
+          className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-[#0E131F]/70 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -97,7 +97,7 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
               role="dialog"
               aria-modal="true"
               aria-labelledby={titleId}
-              className="relative w-full rounded-b-[32px] border-x border-b border-white/5 bg-[#161F33] px-6 pb-[max(2.25rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] text-center shadow-2xl shadow-black/50 will-change-transform"
+              className="relative w-full rounded-b-[32px] border-x border-b border-slate-200 dark:border-white/5 bg-white dark:bg-[#161F33] text-slate-900 dark:text-white px-6 pb-[max(2.25rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] text-center shadow-2xl shadow-slate-900/20 dark:shadow-black/50 will-change-transform"
               initial={{ y: '-100%' }}
               animate={{ y: 0 }}
               exit={{ y: '-100%' }}
@@ -115,7 +115,7 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
             >
               <h2
                 id={titleId}
-                className="font-['Quicksand',sans-serif] text-[22px] font-bold text-white"
+                className="font-['Quicksand',sans-serif] text-[22px] font-bold text-slate-900 dark:text-white"
               >
                 ¿Cuánto pesa tu lloro?
               </h2>
@@ -133,7 +133,7 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
               </div>
 
               <p
-                className="mt-2 font-['Lato',sans-serif] text-sm text-[#8E9CAE]"
+                className="mt-2 font-['Lato',sans-serif] text-sm text-slate-500 dark:text-[#8E9CAE]"
                 aria-live="polite"
               >
                 {current.label}
@@ -148,24 +148,24 @@ export const LlorometroTopSheet: React.FC<LlorometroTopSheetProps> = ({
                 onValueChange={([v]) => setLevel(v)}
                 onPointerDownCapture={(e) => e.stopPropagation()}
               >
-                <Slider.Track className="relative h-1.5 grow overflow-hidden rounded-full bg-[#0E131F]">
+                <Slider.Track className="relative h-1.5 grow overflow-hidden rounded-full bg-slate-200 dark:bg-[#0E131F]">
                   <Slider.Range className="absolute h-full rounded-full bg-[#4EA8DE]" />
                 </Slider.Track>
                 <Slider.Thumb
                   aria-label="Peso del lloro"
                   aria-valuetext={`${level} de 10: ${current.label}`}
-                  className="relative block h-7 w-7 cursor-grab rounded-full bg-white shadow-[0_0_14px_rgba(78,168,222,0.7)] transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE] focus-visible:ring-offset-2 focus-visible:ring-offset-[#161F33] active:cursor-grabbing"
+                  className="relative block h-7 w-7 cursor-grab rounded-full bg-white shadow-[0_0_14px_rgba(78,168,222,0.7)] transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#161F33] active:cursor-grabbing"
                 >
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 font-['Lato',sans-serif] text-base text-white"
+                    className="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 font-['Lato',sans-serif] text-base text-slate-900 dark:text-white"
                   >
                     {level}
                   </span>
                 </Slider.Thumb>
               </Slider.Root>
 
-              <div className="mt-2 flex justify-between font-['Lato',sans-serif] text-sm text-[#8E9CAE]">
+              <div className="mt-2 flex justify-between font-['Lato',sans-serif] text-sm text-slate-500 dark:text-[#8E9CAE]">
                 <span>
                   {first.level} <span aria-hidden="true">({first.emoji})</span>
                 </span>

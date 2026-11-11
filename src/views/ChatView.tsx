@@ -72,25 +72,25 @@ export const ChatView: React.FC<ChatViewProps> = ({
   return (
     <div
       role="main"
-      className="relative h-full w-full min-h-[100dvh] bg-[#0E131F] select-none overflow-hidden"
+      className="relative h-full w-full min-h-[100dvh] bg-slate-50 dark:bg-[#0E131F] text-slate-900 dark:text-white select-none overflow-hidden transition-colors duration-200"
     >
       <div className="w-full max-w-md mx-auto h-full flex flex-col justify-between">
         {/* Top bar */}
-        <header className="flex items-center justify-between py-4 px-6 border-b border-[#161F33] select-none pt-[max(1rem,env(safe-area-inset-top))]">
+        <header className="flex items-center justify-between py-4 px-6 border-b border-slate-200 dark:border-[#161F33] select-none pt-[max(1rem,env(safe-area-inset-top))]">
           <button
             type="button"
             onClick={onBack}
             aria-label="Volver"
-            className="text-[#8E9CAE] hover:text-white transition-all duration-150 active:scale-[0.96] cursor-pointer rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
+            className="text-slate-500 dark:text-[#8E9CAE] hover:text-slate-900 dark:hover:text-white transition-all duration-150 active:scale-[0.96] cursor-pointer rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
           >
             <ArrowLeft size={24} aria-hidden="true" />
           </button>
 
           <div className="flex flex-col items-center text-center">
-            <h1 className="font-['Quicksand',sans-serif] font-bold text-lg text-white">La Gotita</h1>
-            <p className="font-['Lato',sans-serif] text-xs text-[#8E9CAE] inline-flex items-center gap-1.5">
+            <h1 className="font-['Quicksand',sans-serif] font-bold text-lg text-slate-900 dark:text-white">La Gotita</h1>
+            <p className="font-['Lato',sans-serif] text-xs text-slate-500 dark:text-[#8E9CAE] inline-flex items-center gap-1.5">
               Escuchando desganado...
-              <span className="w-2 h-2 rounded-full bg-[#8E9CAE]/60 inline-block" aria-hidden="true" />
+              <span className="w-2 h-2 rounded-full bg-slate-400 dark:bg-[#8E9CAE]/60 inline-block" aria-hidden="true" />
             </p>
           </div>
 
@@ -113,9 +113,8 @@ export const ChatView: React.FC<ChatViewProps> = ({
                   <li key={m.id} className="flex items-start gap-2.5 max-w-[85%]">
                     <Gotita size={26} className="flex-shrink-0 mt-1" />
                     <p
-                      className={`selectable bg-[#161F33] rounded-2xl ${
-                        startsRun ? 'rounded-tl-none' : ''
-                      } p-4 text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] select-text`}
+                      className={`selectable bg-white dark:bg-[#161F33] border border-slate-200/80 dark:border-transparent rounded-2xl ${startsRun ? 'rounded-tl-none' : ''
+                        } p-4 text-slate-900 dark:text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] shadow-sm dark:shadow-none select-text`}
                     >
                       {m.text}
                     </p>
@@ -126,13 +125,12 @@ export const ChatView: React.FC<ChatViewProps> = ({
               return (
                 <li key={m.id} className="flex flex-col items-end max-w-[85%] ml-auto">
                   <p
-                    className={`selectable bg-[#20293A] rounded-2xl ${
-                      startsRun ? 'rounded-tr-none' : ''
-                    } p-4 text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] select-text`}
+                    className={`selectable bg-slate-200 dark:bg-[#20293A] rounded-2xl ${startsRun ? 'rounded-tr-none' : ''
+                      } p-4 text-slate-900 dark:text-white text-[15px] leading-relaxed font-['Quicksand',sans-serif] select-text`}
                   >
                     {m.text}
                   </p>
-                  <span className="text-[11px] text-[#8E9CAE]/70 mt-1 mr-1 font-['Lato',sans-serif]">
+                  <span className="text-[11px] text-slate-400 dark:text-[#8E9CAE]/70 mt-1 mr-1 font-['Lato',sans-serif]">
                     Visto
                   </span>
                 </li>
@@ -143,7 +141,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
 
         {/* Footer con el campo de texto anclado al fondo absoluto */}
         <footer
-          className="absolute bottom-0 inset-x-0 w-full max-w-md mx-auto px-6 pb-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-[#0E131F] via-[#0E131F] to-transparent z-20"
+          className="absolute bottom-0 inset-x-0 w-full max-w-md mx-auto px-6 pb-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent dark:from-[#0E131F] dark:via-[#0E131F] dark:to-transparent z-20"
           onPointerDownCapture={(e) => e.stopPropagation()}
         >
           <LloroInput

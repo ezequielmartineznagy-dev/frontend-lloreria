@@ -76,7 +76,7 @@ export const LloroInput: React.FC<LloroInputProps> = ({
     <div className={`w-full ${className}`}>
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-center justify-between gap-2 w-full bg-[#161F33] rounded-full px-6 py-4 shadow-lg border border-transparent focus-within:border-[#4EA8DE]/30 transition-all duration-200"
+        className="relative flex items-center justify-between gap-2 w-full bg-white dark:bg-[#161F33] rounded-full px-6 py-4 shadow-lg border border-slate-200 dark:border-transparent shadow-slate-200/50 dark:shadow-black/20 focus-within:border-[#4EA8DE]/50 transition-all duration-200"
         aria-label="Formulario para desahogarse"
       >
         {isRecording ? (
@@ -85,7 +85,7 @@ export const LloroInput: React.FC<LloroInputProps> = ({
             <button
               type="button"
               onClick={cancelRecording}
-              className={`${iconButton} p-1 text-[#8E9CAE] hover:text-[#C94A4A] transition-colors`}
+              className={`${iconButton} p-1 text-slate-400 dark:text-[#8E9CAE] hover:text-[#C94A4A] transition-colors`}
               aria-label="Cancelar grabación"
               title="Cancelar grabación"
             >
@@ -125,14 +125,14 @@ export const LloroInput: React.FC<LloroInputProps> = ({
               value={value}
               onChange={(e) => onChange(e.target.value)}
               placeholder={placeholder}
-              className="w-full min-w-0 bg-transparent text-white placeholder-[#8E9CAE] focus:outline-none font-['Lato',sans-serif] text-base md:text-lg caret-[#4EA8DE]"
+              className="w-full min-w-0 bg-transparent text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-[#8E9CAE] focus:outline-none font-['Lato',sans-serif] text-base md:text-lg caret-[#4EA8DE]"
               aria-label={ariaLabel ?? placeholder ?? 'Escribe tu desahogo'}
             />
             {canRecord && (
               <button
                 type="button"
                 onClick={startRecording}
-                className={`${iconButton} p-1 text-[#8E9CAE] hover:text-[#4EA8DE]`}
+                className={`${iconButton} p-1 text-slate-400 dark:text-[#8E9CAE] hover:text-[#4EA8DE]`}
                 aria-label="Grabar mensaje de voz"
                 title="Grabar voz"
               >
@@ -142,7 +142,7 @@ export const LloroInput: React.FC<LloroInputProps> = ({
             <button
               type="submit"
               disabled={!hasText}
-              className={`${iconButton} -my-1 flex h-8 w-8 items-center justify-center bg-[#4EA8DE] text-[#0E131F] hover:brightness-110 disabled:active:scale-100 disabled:bg-[#8E9CAE]/15 disabled:text-[#8E9CAE] disabled:cursor-default disabled:hover:brightness-100`}
+              className={`${iconButton} -my-1 flex h-8 w-8 items-center justify-center bg-[#4EA8DE] text-white hover:brightness-110 disabled:active:scale-100 disabled:bg-slate-200 dark:disabled:bg-[#8E9CAE]/15 disabled:text-slate-400 dark:disabled:text-[#8E9CAE] disabled:cursor-default disabled:hover:brightness-100`}
               aria-label="Enviar mensaje"
               title="Enviar"
             >

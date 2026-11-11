@@ -76,7 +76,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#0E131F]/70 backdrop-blur-md"
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/60 dark:bg-[#0E131F]/70 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -89,7 +89,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
             aria-modal="true"
             aria-labelledby={labelId}
             aria-describedby={textId}
-            className="w-full max-w-sm bg-[#161F33] border border-white/5 rounded-[32px] p-6 md:p-8 flex flex-col items-center text-center shadow-2xl shadow-black/50 will-change-transform"
+            className="w-full max-w-sm bg-white dark:bg-[#161F33] text-slate-900 dark:text-white border border-slate-200 dark:border-white/5 rounded-[32px] p-6 md:p-8 flex flex-col items-center text-center shadow-2xl shadow-slate-900/20 dark:shadow-black/50 will-change-transform"
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
@@ -100,14 +100,14 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
 
             <h2
               id={labelId}
-              className="font-['Lato',sans-serif] font-bold text-xs uppercase tracking-[0.25em] text-[#8E9CAE] mb-3"
+              className="font-['Lato',sans-serif] font-bold text-xs uppercase tracking-[0.25em] text-slate-500 dark:text-[#8E9CAE] mb-3"
             >
               Diagnóstico
             </h2>
 
             <p
               id={textId}
-              className="font-['Quicksand',sans-serif] font-medium text-[16px] md:text-[17px] leading-relaxed text-white mb-8 max-w-[280px]"
+              className="font-['Quicksand',sans-serif] font-medium text-[16px] md:text-[17px] leading-relaxed text-slate-900 dark:text-white mb-8 max-w-[280px]"
             >
               {diagnosisText}
             </p>
@@ -117,7 +117,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
               type="button"
               onClick={onAcceptDestiny}
               aria-label="Aceptar mi destino"
-              className="w-full py-4 rounded-full bg-[#4EA8DE] hover:bg-[#3ba0de] active:scale-[0.96] transition-all duration-150 font-['Quicksand',sans-serif] font-bold text-sm tracking-wide uppercase text-[#0E131F] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#161F33]"
+              className="w-full py-4 rounded-full bg-[#4EA8DE] hover:bg-[#3ba0de] active:scale-[0.96] transition-all duration-150 font-['Quicksand',sans-serif] font-bold text-sm tracking-wide uppercase text-white dark:text-[#0E131F] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-[#161F33]"
             >
               Aceptar mi destino
             </button>
@@ -126,7 +126,7 @@ export const DiagnosticModal: React.FC<DiagnosticModalProps> = ({
               type="button"
               onClick={onShareDrama}
               aria-label="Compartir drama"
-              className="mt-5 inline-flex items-center gap-2 text-[#8E9CAE] hover:text-white transition-all duration-150 active:scale-[0.96] cursor-pointer rounded-full px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
+              className="mt-5 inline-flex items-center gap-2 text-slate-500 dark:text-[#8E9CAE] hover:text-slate-900 dark:hover:text-white transition-all duration-150 active:scale-[0.96] cursor-pointer rounded-full px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#4EA8DE]"
             >
               <span className="font-['Lato',sans-serif] text-sm">Compartir drama</span>
               <Share2 size={16} aria-hidden="true" />

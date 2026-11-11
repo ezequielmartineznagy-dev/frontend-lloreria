@@ -40,15 +40,15 @@ export const HomeView: React.FC<HomeViewProps> = ({ onSubmitDraft }) => {
   return (
     <div
       role="main"
-      className="relative h-full w-full min-h-[100dvh] bg-[#0E131F] flex flex-col justify-between selection:bg-[#4EA8DE]/30 selection:text-white select-none overflow-hidden"
+      className="relative h-full w-full min-h-[100dvh] bg-slate-50 dark:bg-[#0E131F] text-slate-900 dark:text-white flex flex-col justify-between selection:bg-[#4EA8DE]/30 select-none overflow-hidden transition-colors duration-200"
     >
       <div className="w-full max-w-md mx-auto h-full min-h-[100dvh] flex flex-col justify-between pt-12 pb-28 px-6">
         {/* Header de la aplicación */}
         <header className="text-center pt-2 select-none">
-          <h1 className="font-['Quicksand',sans-serif] font-bold text-3xl sm:text-4xl text-white tracking-wide">
+          <h1 className="font-['Quicksand',sans-serif] font-bold text-3xl sm:text-4xl text-slate-900 dark:text-white tracking-wide">
             La Llorería
           </h1>
-          <p className="font-['Lato',sans-serif] text-lg text-[#8E9CAE] mt-2 font-normal">
+          <p className="font-['Lato',sans-serif] text-lg text-slate-500 dark:text-[#8E9CAE] mt-2 font-normal">
             Desahogate
           </p>
         </header>

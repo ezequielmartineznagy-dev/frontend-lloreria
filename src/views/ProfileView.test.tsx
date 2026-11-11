@@ -9,7 +9,7 @@ const setup = (isAlarmEnabled = true) => {
     stats: { volumen: '3.8 L', dramaPromedio: '7.2', rachaActiva: '14 días' },
     onSaveUsername: vi.fn(),
     onThemeChange: vi.fn(),
-    currentTheme: 'oscuro' as const,
+    currentTheme: 'dark' as const,
     alarmTime: '20:00 hs',
     isAlarmEnabled,
     onToggleAlarm: vi.fn(),
@@ -31,7 +31,7 @@ describe('ProfileView', () => {
     const props = setup()
     expect(screen.getByRole('radio', { name: 'Oscuro' })).toBeChecked()
     await userEvent.click(screen.getByRole('radio', { name: 'Claro' }))
-    expect(props.onThemeChange).toHaveBeenCalledWith('claro')
+    expect(props.onThemeChange).toHaveBeenCalledWith('light')
   })
 
   it('alterna la alarma', async () => {

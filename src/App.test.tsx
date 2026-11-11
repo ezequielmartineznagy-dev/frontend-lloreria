@@ -55,17 +55,22 @@ describe('App: navegación por gestos y paginación horizontal', () => {
     expect(screen.getByRole('button', { name: 'Ir a Inicio' })).toHaveAttribute('aria-current', 'page')
   })
 
-  it('no contiene BottomNav y permite volver del Chat al Home', async () => {
+  it('oculta los dots de paginación en el Chat y permite volver al Home', async () => {
     render(<App />)
 
-    // BottomNav eliminada por completo
+    // BottomNav eliminada por completo y dots presentes en Home
     expect(screen.queryByRole('navigation', { name: 'Navegación principal' })).not.toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Paginación horizontal' })).toBeInTheDocument()
 
     await sendFromHome('Algo dramático')
     expect(await screen.findByText('La Gotita', {}, SLOW)).toBeInTheDocument()
 
-    // Al tocar volver en el chat, regresa al home
+    // En el chat los dots de paginación NO deben renderizarse en el DOM
+    expect(screen.queryByRole('navigation', { name: 'Paginación horizontal' })).not.toBeInTheDocument()
+
+    // Al tocar volver en el chat, regresa al home y los dots reaparecen
     await userEvent.click(screen.getByRole('button', { name: 'Volver' }))
     expect(await screen.findByText('Desahogate')).toBeInTheDocument()
+    expect(screen.getByRole('navigation', { name: 'Paginación horizontal' })).toBeInTheDocument()
   })
 })
